@@ -11,6 +11,7 @@ import com.mars.essalureservamedica.data.repository.AppRepository
 import com.mars.essalureservamedica.utils.SessionManager
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import com.mars.essalureservamedica.data.entity.EstadoCita
 import java.util.*
 
 class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
@@ -95,7 +96,13 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                     notas = notes.ifEmpty { null }
                 )
 
-                repository.insertCita(cita)
+                val citaId = repository.insertCita(cita)
+                
+                // Crear notificación automática para la nueva cita
+                val titulo = "Nueva cita agendada"
+                val mensaje = "Su cita ha sido agendada exitosamente"
+                repository.crearNotificacionCita(userId, citaId.toInt(), EstadoCita.CONFIRMADA.name, titulo, mensaje)
+                
                 _appointmentResult.value = Result.success(Unit)
             } catch (e: Exception) {
                 _appointmentResult.value = Result.failure(e)

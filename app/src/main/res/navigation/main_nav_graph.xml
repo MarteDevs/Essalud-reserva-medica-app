@@ -23,4 +23,16 @@
         android:label="Citas"
         tools:layout="@layout/fragment_appointments" />
 
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.mars.essalureservamedica.ui.profile.ProfileFragment"
+        android:label="Perfil"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/nav_notifications"
+        android:name="com.mars.essalureservamedica.ui.notifications.NotificationsFragment"
+        android:label="Notificaciones"
+        tools:layout="@layout/fragment_notifications" />
+
 </navigation>

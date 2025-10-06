@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Información del Doctor -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_background"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tvDoctorName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dr. Nombre del Doctor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvSpecialty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Especialidad"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvAppointmentDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fecha: 01/01/2024 10:00"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary" />
+
+    </LinearLayout>
+
+    <!-- Título de Calificación -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="¿Cómo calificarías tu consulta?"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Rating Bar -->
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:rating="5"
+        android:progressTint="@color/primary"
+        android:secondaryProgressTint="@color/background_light"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Texto de Calificación -->
+    <TextView
+        android:id="@+id/tvRatingText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Excelente (5.0 estrellas)"
+        android:textSize="14sp"
+        android:textColor="@color/primary"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Campo de Comentario -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Comentario (opcional):"
+        android:textSize="14sp"
+        android:textColor="@color/text_primary"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/etComment"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/rounded_background"
+        android:padding="12dp"
+        android:hint="Comparte tu experiencia con este doctor..."
+        android:textColorHint="@color/text_secondary"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:gravity="top|start"
+        android:inputType="textMultiLine|textCapSentences"
+        android:maxLines="4"
+        android:scrollbars="vertical" />
+
+</LinearLayout>

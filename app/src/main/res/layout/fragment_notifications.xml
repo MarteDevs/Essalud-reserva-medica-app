@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_primary">
+
+    <!-- Header con título y contador -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@color/primary_color">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notificaciones"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/tvUnreadCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Notificaciones no leídas: 0"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <!-- Botones de acción -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/background_secondary">
+
+        <Button
+            android:id="@+id/btnMarkAllRead"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Marcar todas como leídas"
+            android:textColor="@android:color/white"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/primary_color"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnClearRead"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Limpiar leídas"
+            android:textColor="@android:color/white"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/secondary_color"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <!-- Contenido principal -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- SwipeRefreshLayout para pull-to-refresh -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- RecyclerView para las notificaciones -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewNotifications"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:clipToPadding="false" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <!-- Estado vacío -->
+        <LinearLayout
+            android:id="@+id/tvEmptyState"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_notifications"
+                android:alpha="0.5"
+                app:tint="@color/text_secondary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No tienes notificaciones"
+                android:textColor="@color/text_secondary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Las notificaciones sobre tus citas aparecerán aquí"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Progress bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+</LinearLayout>

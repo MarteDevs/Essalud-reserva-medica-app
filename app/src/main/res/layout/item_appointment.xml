@@ -79,6 +79,54 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <LinearLayout
+            android:id="@+id/llActionButtons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tvDateTime"
+            app:layout_constraintTop_toBottomOf="@+id/tvDateTime">
+
+            <Button
+                android:id="@+id/btnReschedule"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:text="Reprogramar"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="12dp" />
+
+            <Button
+                android:id="@+id/btnCancel"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Cancelar"
+                android:textColor="@color/error_color"
+                android:textSize="12sp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="12dp" />
+
+            <Button
+                android:id="@+id/btnRate"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Calificar"
+                android:textColor="@color/secondary_color"
+                android:textSize="12sp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="12dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

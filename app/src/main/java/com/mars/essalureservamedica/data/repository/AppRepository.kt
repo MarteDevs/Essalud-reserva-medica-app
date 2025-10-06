@@ -4,12 +4,16 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import com.mars.essalureservamedica.data.database.AppDatabase
 import com.mars.essalureservamedica.data.dao.CitaWithDoctorInfo
+import com.mars.essalureservamedica.data.dao.CalificacionConDetalles
+import com.mars.essalureservamedica.data.entity.Calificacion
 import com.mars.essalureservamedica.data.entity.Cita
 import com.mars.essalureservamedica.data.entity.Doctor
+import com.mars.essalureservamedica.data.entity.Notificacion
 import com.mars.essalureservamedica.data.entity.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class AppRepository(private val database: AppDatabase) {
 
@@ -76,6 +80,30 @@ class AppRepository(private val database: AppDatabase) {
         return database.citaDao().getCitasPorDoctorYFecha(doctorId, fecha)
     }
 
+    suspend fun cancelarCita(citaId: Int) {
+        database.citaDao().cancelarCita(citaId)
+    }
+
+    suspend fun reprogramarCita(citaId: Int, nuevaFechaHora: Date) {
+        database.citaDao().reprogramarCita(citaId, nuevaFechaHora)
+    }
+
+    suspend fun updateCitaEstado(citaId: Int, estado: String) {
+        database.citaDao().updateCitaEstado(citaId, estado)
+    }
+
+    fun getHistorialCitas(userId: Int, fechaActual: Date): LiveData<List<Cita>> {
+        return database.citaDao().getHistorialCitas(userId, fechaActual)
+    }
+
+    suspend fun getCitaCountByUserId(userId: Int): Int {
+        return database.citaDao().getCitaCountByUserId(userId)
+    }
+
+    suspend fun getCitaCountByUserIdAndEstado(userId: Int, estado: String): Int {
+        return database.citaDao().getCitaCountByUserIdAndEstado(userId, estado)
+    }
+
     suspend fun insertCita(cita: Cita): Long {
         return database.citaDao().insert(cita)
     }
@@ -88,7 +116,81 @@ class AppRepository(private val database: AppDatabase) {
         database.citaDao().delete(cita)
     }
 
-    // Populate sample data
+    // Calificacion operations
+    suspend fun insertCalificacion(calificacion: Calificacion): Long {
+        return database.calificacionDao().insert(calificacion)
+    }
+
+    suspend fun updateCalificacion(calificacion: Calificacion) {
+        database.calificacionDao().update(calificacion)
+    }
+
+    suspend fun deleteCalificacion(calificacion: Calificacion) {
+        database.calificacionDao().delete(calificacion)
+    }
+
+    fun getCalificacionesByDoctorId(doctorId: Int): LiveData<List<Calificacion>> {
+        return database.calificacionDao().getCalificacionesByDoctorId(doctorId)
+    }
+
+    fun getCalificacionesConDetallesByDoctorId(doctorId: Int): LiveData<List<CalificacionConDetalles>> {
+        return database.calificacionDao().getCalificacionesConDetallesByDoctorId(doctorId)
+    }
+
+    suspend fun getCalificacionByCitaId(citaId: Int): Calificacion? {
+        return database.calificacionDao().getCalificacionByCitaId(citaId)
+    }
+
+    suspend fun getPromedioPuntuacionDoctor(doctorId: Int): Float? {
+        return database.calificacionDao().getPromedioPuntuacionDoctor(doctorId)
+    }
+
+    suspend fun getCountCalificacionesDoctor(doctorId: Int): Int {
+        return database.calificacionDao().getCountCalificacionesDoctor(doctorId)
+    }
+
+    // Notificacion operations
+    fun getNotificacionesByUserId(userId: Int): LiveData<List<Notificacion>> {
+        return database.notificacionDao().getNotificacionesByUserId(userId)
+    }
+
+    fun getNotificacionesNoLeidasByUserId(userId: Int): LiveData<List<Notificacion>> {
+        return database.notificacionDao().getNotificacionesNoLeidasByUserId(userId)
+    }
+
+    fun getCountNotificacionesNoLeidas(userId: Int): LiveData<Int> {
+        return database.notificacionDao().getCountNotificacionesNoLeidas(userId)
+    }
+
+    suspend fun insertNotificacion(notificacion: Notificacion): Long {
+        return database.notificacionDao().insertNotificacion(notificacion)
+    }
+
+    suspend fun marcarNotificacionComoLeida(notificacionId: Int) {
+        database.notificacionDao().marcarComoLeida(notificacionId)
+    }
+
+    suspend fun marcarTodasNotificacionesComoLeidas(userId: Int) {
+        database.notificacionDao().marcarTodasComoLeidas(userId)
+    }
+
+    suspend fun deleteNotificacionesLeidas(userId: Int) {
+        database.notificacionDao().deleteNotificacionesLeidas(userId)
+    }
+
+    // Método para crear notificaciones automáticas
+    suspend fun crearNotificacionCita(usuarioId: Int, citaId: Int, tipo: String, titulo: String, mensaje: String) {
+        val notificacion = Notificacion(
+            usuarioId = usuarioId,
+            titulo = titulo,
+            mensaje = mensaje,
+            tipo = tipo,
+            citaId = citaId
+        )
+        insertNotificacion(notificacion)
+    }
+
+    // Sample data population
     suspend fun populateSampleData() {
         // Check if data already exists
         val existingDoctors = database.doctorDao().getAllDoctorsSync()

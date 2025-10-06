@@ -76,6 +76,26 @@ interface CitaDao {
     
     @Query("UPDATE citas SET estado = :estado WHERE id = :citaId")
     suspend fun updateCitaEstado(citaId: Int, estado: String)
+
+    @Query("UPDATE citas SET fechaHora = :nuevaFechaHora, estado = 'Reprogramada' WHERE id = :citaId")
+    suspend fun reprogramarCita(citaId: Int, nuevaFechaHora: Date)
+
+    @Query("UPDATE citas SET estado = 'Cancelada' WHERE id = :citaId")
+    suspend fun cancelarCita(citaId: Int)
+
+    @Query("SELECT COUNT(*) FROM citas WHERE usuarioId = :userId")
+    suspend fun getCitaCountByUserId(userId: Int): Int
+
+    @Query("SELECT COUNT(*) FROM citas WHERE usuarioId = :userId AND estado = :estado")
+    suspend fun getCitaCountByUserIdAndEstado(userId: Int, estado: String): Int
+
+    @Query("""
+        SELECT * FROM citas 
+        WHERE usuarioId = :userId 
+        AND fechaHora < :fechaActual 
+        ORDER BY fechaHora DESC
+    """)
+    fun getHistorialCitas(userId: Int, fechaActual: Date): LiveData<List<Cita>>
 }
 
 data class CitaWithDoctorInfo(
@@ -87,4 +107,4 @@ data class CitaWithDoctorInfo(
     val notas: String?,
     val doctorNombre: String,
     val doctorEspecialidad: String
-)
+) : java.io.Serializable

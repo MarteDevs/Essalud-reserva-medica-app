@@ -60,6 +60,9 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     
+    // SwipeRefreshLayout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)

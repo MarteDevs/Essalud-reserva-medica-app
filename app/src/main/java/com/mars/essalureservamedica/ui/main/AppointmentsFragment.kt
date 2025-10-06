@@ -5,11 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mars.essalureservamedica.data.dao.CitaWithDoctorInfo
+import com.mars.essalureservamedica.data.entity.EstadoCita
 import com.mars.essalureservamedica.databinding.FragmentAppointmentsBinding
 import com.mars.essalureservamedica.ui.main.adapter.AppointmentsAdapter
+import com.mars.essalureservamedica.ui.rating.RatingDialogFragment
+import com.mars.essalureservamedica.utils.SessionManager
 
 class AppointmentsFragment : Fragment() {
 
@@ -36,11 +41,24 @@ class AppointmentsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        appointmentsAdapter = AppointmentsAdapter { citaWithDoctorInfo ->
-            // Manejar click en cita - navegar a detalles o mostrar opciones
-            // Por ahora solo mostrar un Toast
-            Toast.makeText(requireContext(), "Cita con Dr. ${citaWithDoctorInfo.doctorNombre}", Toast.LENGTH_SHORT).show()
-        }
+        appointmentsAdapter = AppointmentsAdapter(
+            onAppointmentClick = { citaWithDoctorInfo ->
+                // Mostrar detalles de la cita
+                showAppointmentDetails(citaWithDoctorInfo)
+            },
+            onCancelClick = { citaWithDoctorInfo ->
+                // Mostrar confirmación para cancelar
+                showCancelConfirmation(citaWithDoctorInfo)
+            },
+            onRescheduleClick = { citaWithDoctorInfo ->
+                // Mostrar diálogo para reprogramar
+                showRescheduleDialog(citaWithDoctorInfo)
+            },
+            onRateClick = { citaWithDoctorInfo ->
+                // Mostrar diálogo para calificar
+                showRatingDialog(citaWithDoctorInfo)
+            }
+        )
 
         binding.rvAppointments.apply {
             adapter = appointmentsAdapter
@@ -56,6 +74,64 @@ class AppointmentsFragment : Fragment() {
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        viewModel.operationResult.observe(viewLifecycleOwner) { result ->
+            result?.let {
+                if (it.isSuccess) {
+                    Toast.makeText(requireContext(), it.getOrNull(), Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), 
+                        it.exceptionOrNull()?.message ?: "Error en la operación", 
+                        Toast.LENGTH_LONG).show()
+                }
+                viewModel.clearOperationResult()
+            }
+        }
+    }
+
+    private fun showAppointmentDetails(cita: CitaWithDoctorInfo) {
+        val estado = EstadoCita.fromString(cita.estado)
+        val message = """
+            Doctor: Dr. ${cita.doctorNombre}
+            Especialidad: ${cita.doctorEspecialidad}
+            Fecha: ${java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(cita.fechaHora)}
+            Estado: ${estado.displayName}
+            ${if (cita.notas != null) "Notas: ${cita.notas}" else ""}
+        """.trimIndent()
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Detalles de la Cita")
+            .setMessage(message)
+            .setPositiveButton("Cerrar", null)
+            .show()
+    }
+
+    private fun showCancelConfirmation(cita: CitaWithDoctorInfo) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Cancelar Cita")
+            .setMessage("¿Estás seguro de que deseas cancelar la cita con Dr. ${cita.doctorNombre}?")
+            .setPositiveButton("Sí, Cancelar") { _, _ ->
+                viewModel.cancelarCita(cita.id)
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun showRescheduleDialog(cita: CitaWithDoctorInfo) {
+        val dialog = RescheduleDialogFragment.newInstance(cita)
+        dialog.show(childFragmentManager, "RescheduleDialog")
+    }
+
+    private fun showRatingDialog(cita: CitaWithDoctorInfo) {
+        val sessionManager = SessionManager(requireContext())
+        val userId = sessionManager.getUserId()
+        
+        if (userId != -1) {
+            val dialog = RatingDialogFragment.newInstance(cita, userId)
+            dialog.show(childFragmentManager, "RatingDialog")
+        } else {
+            Toast.makeText(requireContext(), "Error: Usuario no autenticado", Toast.LENGTH_SHORT).show()
         }
     }
 

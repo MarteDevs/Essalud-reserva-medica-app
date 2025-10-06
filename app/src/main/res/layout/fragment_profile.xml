@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="32dp">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_person"
+                android:background="@drawable/circle_background"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp"
+                app:tint="@color/primary_color" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mi Perfil"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
+
+        </LinearLayout>
+
+        <!-- Información Personal -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Información Personal"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="16dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNombreCompleto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre Completo"
+                android:inputType="textPersonName" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Correo Electrónico"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Cambiar Contraseña -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cambiar Contraseña"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="16dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:passwordToggleEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCurrentPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contraseña Actual"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:passwordToggleEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNewPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nueva Contraseña (opcional)"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:passwordToggleEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Confirmar Nueva Contraseña"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Botones -->
+        <Button
+            android:id="@+id/btnUpdateProfile"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Actualizar Perfil"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/primary_color"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.Button" />
+
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Cerrar Sesión"
+            android:textColor="@color/primary_color"
+            android:backgroundTint="@android:color/transparent"
+            android:strokeColor="@color/primary_color"
+            android:strokeWidth="2"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</ScrollView>

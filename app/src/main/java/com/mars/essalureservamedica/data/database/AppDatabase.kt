@@ -7,19 +7,23 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mars.essalureservamedica.data.converter.DateConverter
+import com.mars.essalureservamedica.data.dao.CalificacionDao
 import com.mars.essalureservamedica.data.dao.CitaDao
 import com.mars.essalureservamedica.data.dao.DoctorDao
+import com.mars.essalureservamedica.data.dao.NotificacionDao
 import com.mars.essalureservamedica.data.dao.UserDao
+import com.mars.essalureservamedica.data.entity.Calificacion
 import com.mars.essalureservamedica.data.entity.Cita
 import com.mars.essalureservamedica.data.entity.Doctor
+import com.mars.essalureservamedica.data.entity.Notificacion
 import com.mars.essalureservamedica.data.entity.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [User::class, Doctor::class, Cita::class],
-    version = 1,
+    entities = [User::class, Doctor::class, Cita::class, Calificacion::class, Notificacion::class],
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(DateConverter::class)
@@ -28,6 +32,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun doctorDao(): DoctorDao
     abstract fun citaDao(): CitaDao
+    abstract fun calificacionDao(): CalificacionDao
+    abstract fun notificacionDao(): NotificacionDao
     
     companion object {
         @Volatile
@@ -40,6 +46,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "essalud_database"
                 )
+                .fallbackToDestructiveMigration()
                 .addCallback(DatabaseCallback())
                 .build()
                 INSTANCE = instance
