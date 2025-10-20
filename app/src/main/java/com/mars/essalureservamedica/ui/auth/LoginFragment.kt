@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,7 +19,7 @@ class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-    
+
     private val authViewModel: AuthViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -32,11 +33,17 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
+        setupAnimations()
         setupObservers()
         setupClickListeners()
     }
 
+    private fun setupAnimations() {
+        val slideIn = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_left_content)
+        binding.loginContainer.visibility = View.VISIBLE
+        binding.loginContainer.startAnimation(slideIn)
+    }
     private fun setupObservers() {
         authViewModel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -47,7 +54,6 @@ class LoginFragment : Fragment() {
             when (result) {
                 is AuthResult.Success -> {
                     Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
-                    // Navegar a MainActivity
                     val intent = Intent(requireContext(), MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
@@ -68,7 +74,6 @@ class LoginFragment : Fragment() {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString()
 
-            // Validaciones básicas
             when {
                 email.isEmpty() -> {
                     binding.tilEmail.error = "El correo electrónico es requerido"
@@ -79,11 +84,8 @@ class LoginFragment : Fragment() {
                     return@setOnClickListener
                 }
                 else -> {
-                    // Limpiar errores
                     binding.tilEmail.error = null
                     binding.tilPassword.error = null
-                    
-                    // Proceder con el login
                     authViewModel.login(email, password)
                 }
             }

@@ -2,29 +2,29 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    
+
     <!-- Primary Colors -->
     <color name="primary_color">#2E7D32</color>
     <color name="primary">#2E7D32</color>
     <color name="primary_dark">#1B5E20</color>
     <color name="primary_light">#4CAF50</color>
-    
+
     <!-- Secondary Colors -->
     <color name="secondary_color">#1976D2</color>
     <color name="secondary_dark">#0D47A1</color>
     <color name="secondary_light">#42A5F5</color>
-    
+
     <!-- Text Colors -->
     <color name="text_primary">#212121</color>
     <color name="text_secondary">#757575</color>
     <color name="text_hint">#BDBDBD</color>
-    
+
     <!-- Background Colors -->
     <color name="background_primary">#FAFAFA</color>
     <color name="background_light">#F5F5F5</color>
     <color name="background_secondary">#FFFFFF</color>
     <color name="background_card">#FFFFFF</color>
-    
+
     <!-- Status Colors -->
     <color name="success">#4CAF50</color>
     <color name="success_color">#4CAF50</color>
@@ -34,13 +34,27 @@
     <color name="error_color">#F44336</color>
     <color name="info">#2196F3</color>
     <color name="info_color">#2196F3</color>
-    
+
     <!-- User Status Colors -->
     <color name="status_available">#4CAF50</color>
     <color name="status_available_bg">#E8F5E8</color>
     <color name="status_busy">#FF9800</color>
     <color name="status_unavailable">#F44336</color>
-    
+
     <!-- Divider -->
     <color name="divider">#E0E0E0</color>
+
+    <!-- GREEN COLORS  -->
+    <color name="primary_green">#57C973</color>
+    <color name="dark_green">#317D44</color>
+    <color name="light_green">#93C9A1</color>
+
+    <!-- BLUE IN LOGIN PAGE -->
+    <color name="futuristic_primary">#3c58a0</color> <!-- Azul profundo, para títulos y botones -->
+    <color name="futuristic_secondary">#73c3f9</color> <!-- Azul claro, para acentos e iconos -->
+    <color name="futuristic_background">#e9efff</color> <!-- Fondo muy claro, casi blanco con un toque azul -->
+    <color name="futuristic_text">#1C2A4B</color>     <!-- Texto oscuro, un azul casi negro -->
+    <color name="futuristic_hint">#8A94A6</color>     <!-- Texto para hints, un gris azulado -->
+
+
 </resources>

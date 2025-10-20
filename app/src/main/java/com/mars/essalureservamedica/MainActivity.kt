@@ -37,10 +37,20 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment_main) as NavHostFragment
         navController = navHostFragment.navController
-        
-        // Configurar BottomNavigationView con NavController
+
         binding.bottomNavigation.setupWithNavController(navController)
+
+        val scaleUp = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.bottom_nav_item_animator)
+
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            binding.bottomNavigation.findViewById<android.view.View>(item.itemId)?.startAnimation(scaleUp)
+            if (navController.currentDestination?.id != item.itemId) {
+                navController.navigate(item.itemId)
+            }
+            true
+        }
     }
+
 
     private fun navigateToAuthActivity() {
         val intent = Intent(this, AuthActivity::class.java)
