@@ -6,4 +6,17 @@
     </style>
 
     <style name="Theme.EssaluReservaMedica" parent="Base.Theme.EssaluReservaMedica" />
+
+    <!-- Splash Screen theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="postSplashScreenTheme">@style/Theme.EssaluReservaMedica</item>
+    </style>
+
+    <!-- SearchView style -->
+    <style name="AppSearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/gray</item>
+        <item name="android:background">@color/white</item>
+    </style>
 </resources>
