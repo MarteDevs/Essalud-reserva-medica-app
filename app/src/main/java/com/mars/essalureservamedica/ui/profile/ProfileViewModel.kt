@@ -89,7 +89,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                 repository.updateUser(updatedUser)
 
                 // Actualizar sesión si cambió el nombre o email
-                sessionManager.saveUserSession(updatedUser.id, updatedUser.nombreCompleto, updatedUser.email)
+                sessionManager.saveUserSession(updatedUser.id.toString(), updatedUser.nombreCompleto, updatedUser.email, false)
 
                 // Actualizar el usuario en el LiveData
                 _user.value = updatedUser
