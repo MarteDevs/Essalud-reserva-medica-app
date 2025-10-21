@@ -13,6 +13,7 @@
         <item name="android:textColorHint">@color/futuristic_hint</item>
     </style>
 
+<<<<<<< HEAD
     <!-- ======== INICIO DE CÓDIGO AÑADIDO ======== -->
     <!-- Tema para la nueva Splash Screen -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
@@ -28,4 +29,6 @@
     </style>
     <!-- ========= FIN DE CÓDIGO AÑADIDO ========= -->
 
+=======
+>>>>>>> 0897432c7bfa92bf3ec247866c5fdaa5da99bb5f
 </resources>

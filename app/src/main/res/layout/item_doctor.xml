@@ -30,7 +30,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+<<<<<<< HEAD
             android:src="@drawable/ic_doctor_male" />
+=======
+            tools:src="@drawable/ic_doctors" />
+>>>>>>> 0897432c7bfa92bf3ec247866c5fdaa5da99bb5f
 
         <TextView
             android:id="@+id/tvDoctorName"
