@@ -77,3 +77,25 @@ data class CalificacionFirestore(
         "fecha" to fecha
     )
 }
+
+data class NotificacionFirestore(
+    val id: String = "",
+    val usuarioId: String = "",
+    val titulo: String = "",
+    val mensaje: String = "",
+    val tipo: String = "", // "CITA_CONFIRMADA", "CITA_CANCELADA", "RECORDATORIO", "GENERAL"
+    val leida: Boolean = false,
+    val fechaCreacion: Long = System.currentTimeMillis(),
+    val citaId: String? = null // Opcional, para notificaciones relacionadas con citas
+) {
+    fun toMap(): Map<String, Any> = mapOf(
+        "id" to id,
+        "usuarioId" to usuarioId,
+        "titulo" to titulo,
+        "mensaje" to mensaje,
+        "tipo" to tipo,
+        "leida" to leida,
+        "fechaCreacion" to fechaCreacion,
+        "citaId" to (citaId ?: "")
+    )
+}

@@ -14,9 +14,23 @@ class DatabaseMigrationService @Inject constructor(
     private val doctorDao: DoctorDao,
     private val citaDao: CitaDao,
     private val calificacionDao: CalificacionDao,
+    private val notificacionDao: NotificacionDao,
     private val firestoreService: FirestoreService
 ) {
     suspend fun migrateAllData(): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            migrateUsers()
+            migrateDoctors()
+            migrateCitas()
+            migrateCalificaciones()
+            migrateNotificaciones()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun migrateUsers(): Boolean = withContext(Dispatchers.IO) {
         try {
             // Migrar usuarios
             val users = userDao.getAllUsers().value ?: emptyList()
@@ -29,7 +43,14 @@ class DatabaseMigrationService @Inject constructor(
                 )
                 firestoreService.createUser(userFirestore).getOrThrow()
             }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 
+    suspend fun migrateDoctors(): Boolean = withContext(Dispatchers.IO) {
+        try {
             // Migrar doctores
             val doctors = doctorDao.getAllDoctorsSync()
             doctors.forEach { doctor: Doctor ->
@@ -43,7 +64,14 @@ class DatabaseMigrationService @Inject constructor(
                 )
                 firestoreService.addDoctor(doctorFirestore).getOrThrow()
             }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 
+    suspend fun migrateCitas(): Boolean = withContext(Dispatchers.IO) {
+        try {
             // Migrar citas
             val citas = citaDao.getAllCitas().value ?: emptyList()
             citas.forEach { cita: Cita ->
@@ -59,14 +87,21 @@ class DatabaseMigrationService @Inject constructor(
                 )
                 firestoreService.createCita(citaFirestore).getOrThrow()
             }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 
+    suspend fun migrateCalificaciones(): Boolean = withContext(Dispatchers.IO) {
+        try {
             // Migrar calificaciones
-            val calificaciones = calificacionDao.getAllCalificaciones().value ?: emptyList()
+            val calificaciones = calificacionDao.getAllCalificacionesSync()
             calificaciones.forEach { calificacion: Calificacion ->
                 val calificacionFirestore = CalificacionFirestore(
                     id = calificacion.id.toString(),
-                    usuarioId = calificacion.usuarioId.toString(),
                     doctorId = calificacion.doctorId.toString(),
+                    usuarioId = calificacion.usuarioId.toString(),
                     citaId = calificacion.citaId.toString(),
                     puntuacion = calificacion.puntuacion.toInt(),
                     comentario = calificacion.comentario ?: "",
@@ -74,10 +109,32 @@ class DatabaseMigrationService @Inject constructor(
                 )
                 firestoreService.addCalificacion(calificacionFirestore).getOrThrow()
             }
-
-            Result.success(Unit)
+            true
         } catch (e: Exception) {
-            Result.failure(e)
+            false
+        }
+    }
+
+    suspend fun migrateNotificaciones(): Boolean = withContext(Dispatchers.IO) {
+        try {
+            // Migrar notificaciones
+            val notificaciones = notificacionDao.getAllNotificacionesSync()
+            notificaciones.forEach { notificacion: Notificacion ->
+                val notificacionFirestore = NotificacionFirestore(
+                    id = notificacion.id.toString(),
+                    usuarioId = notificacion.usuarioId.toString(),
+                    titulo = notificacion.titulo,
+                    mensaje = notificacion.mensaje,
+                    tipo = notificacion.tipo,
+                    leida = notificacion.leida,
+                    fechaCreacion = notificacion.fechaCreacion.time,
+                    citaId = notificacion.citaId?.toString()
+                )
+                firestoreService.createNotificacion(notificacionFirestore).getOrThrow()
+            }
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 
@@ -86,31 +143,63 @@ class DatabaseMigrationService @Inject constructor(
             "usuarios" to verifyUsersMigration(),
             "doctores" to verifyDoctorsMigration(),
             "citas" to verifyCitasMigration(),
-            "calificaciones" to verifyCalificacionesMigration()
+            "calificaciones" to verifyCalificacionesMigration(),
+            "notificaciones" to verifyNotificacionesMigration()
         )
     }
 
     private suspend fun verifyUsersMigration(): Boolean {
-        val roomUsers = userDao.getAllUsers().value?.size ?: 0
-        // Implementar verificación del conteo en Firestore
-        return true // Temporalmente retorna true
+        return try {
+            val roomUsers = userDao.getAllUsers().value?.size ?: 0
+            val firestoreResult = firestoreService.getAllUsers()
+            val firestoreUsers = firestoreResult.getOrNull()?.size ?: 0
+            roomUsers == firestoreUsers
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private suspend fun verifyDoctorsMigration(): Boolean {
-        val roomDoctors = doctorDao.getAllDoctorsSync().size
-        // Implementar verificación del conteo en Firestore
-        return true // Temporalmente retorna true
+        return try {
+            val roomDoctors = doctorDao.getAllDoctorsSync().size
+            val firestoreResult = firestoreService.getAllDoctors()
+            val firestoreDoctors = firestoreResult.getOrNull()?.size ?: 0
+            roomDoctors == firestoreDoctors
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private suspend fun verifyCitasMigration(): Boolean {
-        val roomCitas = citaDao.getAllCitas().value?.size ?: 0
-        // Implementar verificación del conteo en Firestore
-        return true // Temporalmente retorna true
+        return try {
+            val roomCitas = citaDao.getAllCitas().value?.size ?: 0
+            val firestoreResult = firestoreService.getAllCitas()
+            val firestoreCitas = firestoreResult.getOrNull()?.size ?: 0
+            roomCitas == firestoreCitas
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private suspend fun verifyCalificacionesMigration(): Boolean {
-        val roomCalificaciones = calificacionDao.getAllCalificaciones().value?.size ?: 0
-        // Implementar verificación del conteo en Firestore
-        return true // Temporalmente retorna true
+        return try {
+            val roomCalificaciones = calificacionDao.getAllCalificacionesSync().size
+            val firestoreResult = firestoreService.getAllCalificaciones()
+            val firestoreCalificaciones = firestoreResult.getOrNull()?.size ?: 0
+            roomCalificaciones == firestoreCalificaciones
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private suspend fun verifyNotificacionesMigration(): Boolean {
+        return try {
+            val roomNotificaciones = notificacionDao.getAllNotificacionesSync().size
+            val firestoreResult = firestoreService.getAllNotificaciones()
+            val firestoreNotificaciones = firestoreResult.getOrNull()?.size ?: 0
+            roomNotificaciones == firestoreNotificaciones
+        } catch (e: Exception) {
+            false
+        }
     }
 }

@@ -48,4 +48,10 @@ interface NotificacionDao {
     
     @Query("DELETE FROM notificaciones WHERE fechaCreacion < :fecha")
     suspend fun deleteNotificacionesAntiguas(fecha: Long)
+
+    @Query("SELECT * FROM notificaciones ORDER BY fechaCreacion DESC")
+    fun getAllNotificaciones(): LiveData<List<Notificacion>>
+
+    @Query("SELECT * FROM notificaciones ORDER BY fechaCreacion DESC")
+    suspend fun getAllNotificacionesSync(): List<Notificacion>
 }

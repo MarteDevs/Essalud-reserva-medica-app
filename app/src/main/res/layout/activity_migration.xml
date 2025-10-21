@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:background="@color/background_primary">
+
+    <!-- Logo o Icono -->
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/ic_cloud_sync"
+        android:contentDescription="Migration Icon"
+        app:tint="@color/primary_color" />
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Migración de Datos"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:layout_marginBottom="16dp"
+        android:gravity="center" />
+
+    <!-- Descripción -->
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Se han detectado datos locales. ¿Deseas migrarlos a Firebase para sincronización en la nube?"
+        android:textSize="16sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp" />
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyle" />
+
+    <!-- Texto de Progreso -->
+    <TextView
+        android:id="@+id/tv_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Iniciando migración..."
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:visibility="gone" />
+
+    <!-- Botones -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp">
+
+        <!-- Botón Iniciar Migración -->
+        <Button
+            android:id="@+id/btn_start_migration"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Iniciar Migración"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_primary"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="12dp"
+            android:elevation="2dp" />
+
+        <!-- Botón Saltar Migración -->
+        <Button
+            android:id="@+id/btn_skip_migration"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Saltar Migración"
+            android:textSize="16sp"
+            android:background="@drawable/button_secondary"
+            android:textColor="@color/primary_color"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Botón Continuar a la App -->
+        <Button
+            android:id="@+id/btn_continue_to_app"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Continuar a la Aplicación"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_primary"
+            android:textColor="@android:color/white"
+            android:visibility="gone"
+            android:elevation="2dp" />
+
+    </LinearLayout>
+
+    <!-- Información adicional -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="La migración puede tardar unos minutos dependiendo de la cantidad de datos."
+        android:textSize="12sp"
+        android:textColor="@color/text_hint"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:alpha="0.7" />
+
+</LinearLayout>

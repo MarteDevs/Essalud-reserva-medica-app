@@ -11,6 +11,9 @@ interface CalificacionDao {
     @Query("SELECT * FROM calificaciones ORDER BY fechaCalificacion DESC")
     fun getAllCalificaciones(): LiveData<List<Calificacion>>
     
+    @Query("SELECT * FROM calificaciones ORDER BY fechaCalificacion DESC")
+    suspend fun getAllCalificacionesSync(): List<Calificacion>
+    
     @Query("SELECT * FROM calificaciones WHERE doctorId = :doctorId ORDER BY fechaCalificacion DESC")
     fun getCalificacionesByDoctorId(doctorId: Int): LiveData<List<Calificacion>>
     

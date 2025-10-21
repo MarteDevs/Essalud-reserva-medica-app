@@ -17,6 +17,7 @@ class SessionManager(private val context: Context) {
         private const val KEY_USER_EMAIL = "user_email"
         private const val KEY_IS_LOGGED_IN = "is_logged_in"
         private const val KEY_IS_FIREBASE_USER = "is_firebase_user"
+        private const val KEY_MIGRATION_COMPLETED = "migration_completed"
     }
     
     fun saveUserSession(userId: String, userName: String, userEmail: String, isFirebaseUser: Boolean = true) {
@@ -100,5 +101,11 @@ class SessionManager(private val context: Context) {
         if (currentUserName != null && currentUserEmail != null) {
             saveUserSession(firebaseUserId, currentUserName, currentUserEmail, true)
         }
+    }
+
+    // Migration preferences
+    fun isMigrationCompleted(): Boolean = prefs.getBoolean(KEY_MIGRATION_COMPLETED, false)
+    fun setMigrationCompleted(completed: Boolean) {
+        prefs.edit().putBoolean(KEY_MIGRATION_COMPLETED, completed).apply()
     }
 }

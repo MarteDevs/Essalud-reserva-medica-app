@@ -16,6 +16,7 @@ class FirestoreService {
     private val doctorsCollection = db.collection("doctors")
     private val citasCollection = db.collection("citas")
     private val calificacionesCollection = db.collection("calificaciones")
+    private val notificacionesCollection = db.collection("notificaciones")
 
     // Usuarios
     suspend fun createUser(user: UserFirestore): Result<String> = try {
@@ -26,13 +27,34 @@ class FirestoreService {
         Result.failure(e)
     }
 
-    suspend fun getUser(userId: String): Result<UserFirestore> = try {
-        val doc = usersCollection.document(userId).get().await()
-        if (doc.exists()) {
-            Result.success(doc.toObject(UserFirestore::class.java)!!)
+    suspend fun getUser(userId: String): Result<UserFirestore?> = try {
+        val document = usersCollection.document(userId).get().await()
+        if (document.exists()) {
+            val user = UserFirestore(
+                id = document.id,
+                nombreCompleto = document.getString("nombreCompleto") ?: "",
+                email = document.getString("email") ?: "",
+                createdAt = document.getLong("createdAt") ?: 0L
+            )
+            Result.success(user)
         } else {
-            Result.failure(NoSuchElementException("Usuario no encontrado"))
+            Result.success(null)
         }
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun getAllUsers(): Result<List<UserFirestore>> = try {
+        val snapshot = usersCollection.get().await()
+        val users = snapshot.documents.mapNotNull { doc ->
+            UserFirestore(
+                id = doc.id,
+                nombreCompleto = doc.getString("nombreCompleto") ?: "",
+                email = doc.getString("email") ?: "",
+                createdAt = doc.getLong("createdAt") ?: 0L
+            )
+        }
+        Result.success(users)
     } catch (e: Exception) {
         Result.failure(e)
     }
@@ -62,6 +84,16 @@ class FirestoreService {
         val doctorWithId = doctor.copy(id = docRef.id)
         docRef.set(doctorWithId.toMap()).await()
         Result.success(docRef.id)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun getAllDoctors(): Result<List<DoctorFirestore>> = try {
+        val snapshot = doctorsCollection.get().await()
+        val doctors = snapshot.documents.mapNotNull { doc ->
+            doc.toObject(DoctorFirestore::class.java)
+        }
+        Result.success(doctors)
     } catch (e: Exception) {
         Result.failure(e)
     }
@@ -105,6 +137,16 @@ class FirestoreService {
         Result.failure(e)
     }
 
+    suspend fun getAllCitas(): Result<List<CitaFirestore>> = try {
+        val snapshot = citasCollection.get().await()
+        val citas = snapshot.documents.mapNotNull { doc ->
+            doc.toObject(CitaFirestore::class.java)
+        }
+        Result.success(citas)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
     // Calificaciones
     suspend fun addCalificacion(calificacion: CalificacionFirestore): Result<String> = try {
         val docRef = calificacionesCollection.document()
@@ -141,5 +183,138 @@ class FirestoreService {
         } catch (e: Exception) {
             // Manejar error de actualización de rating
         }
+    }
+
+    suspend fun getAllCalificaciones(): Result<List<CalificacionFirestore>> = try {
+        val snapshot = calificacionesCollection.get().await()
+        val calificaciones = snapshot.documents.mapNotNull { doc ->
+            doc.toObject(CalificacionFirestore::class.java)
+        }
+        Result.success(calificaciones)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    // Notificaciones
+    suspend fun createNotificacion(notificacion: NotificacionFirestore): Result<String> = try {
+        val docRef = notificacionesCollection.document()
+        val notificacionWithId = notificacion.copy(id = docRef.id)
+        docRef.set(notificacionWithId.toMap()).await()
+        Result.success(docRef.id)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun getNotificacionesByUserId(usuarioId: String): Result<List<NotificacionFirestore>> = try {
+        val snapshot = notificacionesCollection
+            .whereEqualTo("usuarioId", usuarioId)
+            .orderBy("fechaCreacion", Query.Direction.DESCENDING)
+            .get()
+            .await()
+
+        val notificaciones = snapshot.documents.mapNotNull { doc ->
+            NotificacionFirestore(
+                id = doc.id,
+                usuarioId = doc.getString("usuarioId") ?: "",
+                titulo = doc.getString("titulo") ?: "",
+                mensaje = doc.getString("mensaje") ?: "",
+                tipo = doc.getString("tipo") ?: "",
+                leida = doc.getBoolean("leida") ?: false,
+                fechaCreacion = doc.getLong("fechaCreacion") ?: 0L,
+                citaId = doc.getString("citaId")?.takeIf { it.isNotEmpty() }
+            )
+        }
+        Result.success(notificaciones)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun getNotificacionesNoLeidasByUserId(usuarioId: String): Result<List<NotificacionFirestore>> = try {
+        val snapshot = notificacionesCollection
+            .whereEqualTo("usuarioId", usuarioId)
+            .whereEqualTo("leida", false)
+            .orderBy("fechaCreacion", Query.Direction.DESCENDING)
+            .get()
+            .await()
+
+        val notificaciones = snapshot.documents.mapNotNull { doc ->
+            NotificacionFirestore(
+                id = doc.id,
+                usuarioId = doc.getString("usuarioId") ?: "",
+                titulo = doc.getString("titulo") ?: "",
+                mensaje = doc.getString("mensaje") ?: "",
+                tipo = doc.getString("tipo") ?: "",
+                leida = doc.getBoolean("leida") ?: false,
+                fechaCreacion = doc.getLong("fechaCreacion") ?: 0L,
+                citaId = doc.getString("citaId")?.takeIf { it.isNotEmpty() }
+            )
+        }
+        Result.success(notificaciones)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun getCountNotificacionesNoLeidas(usuarioId: String): Result<Int> = try {
+        val snapshot = notificacionesCollection
+            .whereEqualTo("usuarioId", usuarioId)
+            .whereEqualTo("leida", false)
+            .get()
+            .await()
+        Result.success(snapshot.size())
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun marcarNotificacionComoLeida(notificacionId: String): Result<Unit> = try {
+        notificacionesCollection.document(notificacionId)
+            .update("leida", true)
+            .await()
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun marcarTodasNotificacionesComoLeidas(usuarioId: String): Result<Unit> = try {
+        val snapshot = notificacionesCollection
+            .whereEqualTo("usuarioId", usuarioId)
+            .whereEqualTo("leida", false)
+            .get()
+            .await()
+
+        val batch = db.batch()
+        snapshot.documents.forEach { doc ->
+            batch.update(doc.reference, "leida", true)
+        }
+        batch.commit().await()
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun deleteNotificacionesLeidas(usuarioId: String): Result<Unit> = try {
+        val snapshot = notificacionesCollection
+            .whereEqualTo("usuarioId", usuarioId)
+            .whereEqualTo("leida", true)
+            .get()
+            .await()
+
+        val batch = db.batch()
+        snapshot.documents.forEach { doc ->
+            batch.delete(doc.reference)
+        }
+        batch.commit().await()
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun getAllNotificaciones(): Result<List<NotificacionFirestore>> = try {
+        val snapshot = notificacionesCollection.get().await()
+        val notificaciones = snapshot.documents.mapNotNull { doc ->
+            doc.toObject(NotificacionFirestore::class.java)
+        }
+        Result.success(notificaciones)
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }
