@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.mars.essalureservamedica.databinding.ActivityMainBinding
 import com.mars.essalureservamedica.ui.auth.AuthActivity
+import com.mars.essalureservamedica.ui.migration.MigrationActivity
 import com.mars.essalureservamedica.utils.SessionManager
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
@@ -26,6 +27,12 @@ class MainActivity : AppCompatActivity() {
         // Verificar si el usuario está logueado
         if (!sessionManager.isLoggedIn()) {
             navigateToAuthActivity()
+            return
+        }
+        
+        // Verificar si la migración está pendiente
+        if (!sessionManager.isMigrationCompleted()) {
+            navigateToMigrationActivity()
             return
         }
         
@@ -53,9 +60,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun navigateToAuthActivity() {
         val intent = Intent(this, AuthActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+    
+    private fun navigateToMigrationActivity() {
+        val intent = Intent(this, MigrationActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()

@@ -18,6 +18,11 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.migration.MigrationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EssaluReservaMedica" />
+
+        <activity
             android:name=".ui.doctor.DoctorDetailActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity"
