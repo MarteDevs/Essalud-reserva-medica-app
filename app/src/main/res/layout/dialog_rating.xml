@@ -1,107 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/futuristic_background"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="24dp">
 
-    <!-- Información del Doctor -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/rounded_background"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp">
-
-        <TextView
-            android:id="@+id/tvDoctorName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dr. Nombre del Doctor"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:id="@+id/tvSpecialty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Especialidad"
-            android:textSize="14sp"
-            android:textColor="@color/text_secondary"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:id="@+id/tvAppointmentDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Fecha: 01/01/2024 10:00"
-            android:textSize="12sp"
-            android:textColor="@color/text_secondary" />
-
-    </LinearLayout>
-
-    <!-- Título de Calificación -->
+    <!-- Título del Diálogo -->
     <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:text="Calificar Consulta"
+        android:textColor="@color/futuristic_primary"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <!-- Información de la cita en una tarjeta -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="¿Cómo calificarías tu consulta?"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@color/text_primary"
-        android:gravity="center"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="24dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="16dp"
+        app:strokeColor="@color/futuristic_background"
+        app:strokeWidth="1dp">
 
-    <!-- Rating Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvDoctorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/futuristic_text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Dr. Juan Pérez" />
+
+            <TextView
+                android:id="@+id/tvSpecialty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/futuristic_primary"
+                android:textSize="14sp"
+                tools:text="Cardiología" />
+
+            <TextView
+                android:id="@+id/tvAppointmentDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/futuristic_hint"
+                android:textSize="12sp"
+                app:drawableStartCompat="@drawable/ic_calendar"
+                app:drawableTint="@color/futuristic_hint"
+                tools:text="15 Dic 2024 - 10:00 AM" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Calificación con estrellas -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="¿Cómo calificarías la consulta?"
+        android:textColor="@color/futuristic_text"
+        android:textSize="16sp" />
+
     <RatingBar
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
         android:numStars="5"
+        android:progressTint="@color/futuristic_secondary"
+        android:secondaryProgressTint="@color/futuristic_hint"
         android:stepSize="0.5"
-        android:rating="5"
-        android:progressTint="@color/primary"
-        android:secondaryProgressTint="@color/background_light"
-        android:layout_marginBottom="8dp" />
+        tools:rating="4.5" />
 
-    <!-- Texto de Calificación -->
     <TextView
         android:id="@+id/tvRatingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:textColor="@color/futuristic_secondary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="Muy Buena (4.5 estrellas)" />
+
+    <!-- Campo de comentario estilizado -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilComment"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Excelente (5.0 estrellas)"
-        android:textSize="14sp"
-        android:textColor="@color/primary"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
+        android:hint="Comentario (opcional)"
+        app:boxStrokeColor="@color/futuristic_primary"
+        app:hintTextColor="@color/futuristic_primary">
 
-    <!-- Campo de Comentario -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Comentario (opcional):"
-        android:textSize="14sp"
-        android:textColor="@color/text_primary"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            android:inputType="textMultiLine|textCapSentences"
+            android:lines="4"
+            android:maxLines="6"
+            android:textColor="@color/futuristic_text"
+            tools:text="La atención fue excelente, el doctor fue muy atento y resolvió todas mis dudas." />
 
-    <EditText
-        android:id="@+id/etComment"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@drawable/rounded_background"
-        android:padding="12dp"
-        android:hint="Comparte tu experiencia con este doctor..."
-        android:textColorHint="@color/text_secondary"
-        android:textColor="@color/text_primary"
-        android:textSize="14sp"
-        android:gravity="top|start"
-        android:inputType="textMultiLine|textCapSentences"
-        android:maxLines="4"
-        android:scrollbars="vertical" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

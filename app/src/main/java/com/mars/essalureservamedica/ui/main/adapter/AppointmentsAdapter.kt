@@ -1,11 +1,14 @@
 package com.mars.essalureservamedica.ui.main.adapter
 
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.mars.essalureservamedica.R // <-- Asegúrate de que esta importación exista
 import com.mars.essalureservamedica.data.dao.CitaWithDoctorInfo
 import com.mars.essalureservamedica.data.entity.EstadoCita
 import com.mars.essalureservamedica.databinding.ItemAppointmentBinding
@@ -43,37 +46,32 @@ class AppointmentsAdapter(
                 tvDoctorName.text = "Dr. ${citaWithDoctorInfo.doctorNombre}"
                 tvSpecialty.text = citaWithDoctorInfo.doctorEspecialidad
                 tvDateTime.text = dateFormat.format(citaWithDoctorInfo.fechaHora)
-                tvStatus.text = citaWithDoctorInfo.estado
+
+                // --- INICIO DE CAMBIOS ---
+
+                // 1. Asignar el texto al nuevo Chip
+                chipStatus.text = citaWithDoctorInfo.estado
+
+                val estado = EstadoCita.fromString(citaWithDoctorInfo.estado)
+
+                // 2. Configurar colores del Chip (en lugar del TextView)
+                val statusColor = when (estado) {
+                    EstadoCita.PENDIENTE -> ContextCompat.getColor(root.context, android.R.color.holo_orange_dark)
+                    EstadoCita.CONFIRMADA -> ContextCompat.getColor(root.context, R.color.futuristic_secondary) // Usando nuestro color
+                    EstadoCita.CANCELADA -> ContextCompat.getColor(root.context, R.color.error) // Usando nuestro color
+                    EstadoCita.COMPLETADA -> ContextCompat.getColor(root.context, R.color.futuristic_primary) // Usando nuestro color
+                    EstadoCita.REPROGRAMADA -> ContextCompat.getColor(root.context, android.R.color.holo_purple)
+                }
+
+                // Aplicar los colores al Chip
+                chipStatus.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(root.context, R.color.futuristic_background))
+                chipStatus.setTextColor(statusColor)
+
+                // --- FIN DE CAMBIOS ---
 
                 // Configurar visibilidad de botones según el estado
-                val estado = EstadoCita.fromString(citaWithDoctorInfo.estado)
                 val canModify = estado == EstadoCita.PENDIENTE || estado == EstadoCita.CONFIRMADA
-                
                 llActionButtons.visibility = if (canModify) View.VISIBLE else View.GONE
-                
-                // Configurar colores del estado
-                when (estado) {
-                    EstadoCita.PENDIENTE -> {
-                        tvStatus.setBackgroundResource(android.R.drawable.btn_default)
-                        tvStatus.setTextColor(binding.root.context.getColor(android.R.color.holo_orange_dark))
-                    }
-                    EstadoCita.CONFIRMADA -> {
-                        tvStatus.setBackgroundResource(android.R.drawable.btn_default)
-                        tvStatus.setTextColor(binding.root.context.getColor(android.R.color.holo_green_dark))
-                    }
-                    EstadoCita.CANCELADA -> {
-                        tvStatus.setBackgroundResource(android.R.drawable.btn_default)
-                        tvStatus.setTextColor(binding.root.context.getColor(android.R.color.holo_red_dark))
-                    }
-                    EstadoCita.COMPLETADA -> {
-                        tvStatus.setBackgroundResource(android.R.drawable.btn_default)
-                        tvStatus.setTextColor(binding.root.context.getColor(android.R.color.holo_blue_dark))
-                    }
-                    EstadoCita.REPROGRAMADA -> {
-                        tvStatus.setBackgroundResource(android.R.drawable.btn_default)
-                        tvStatus.setTextColor(binding.root.context.getColor(android.R.color.holo_purple))
-                    }
-                }
 
                 // Configurar listeners
                 root.setOnClickListener {

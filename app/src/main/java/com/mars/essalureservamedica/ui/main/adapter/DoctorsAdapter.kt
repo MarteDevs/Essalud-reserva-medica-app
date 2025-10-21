@@ -31,7 +31,7 @@ class DoctorsAdapter(
 
         fun bind(doctor: Doctor) {
             binding.apply {
-                tvDoctorName.text = "Dr. ${doctor.nombre}"
+                tvDoctorName.text = doctor.nombre
                 tvSpecialty.text = doctor.especialidad
                 tvExperience.text = "${doctor.experiencia} años de experiencia"
 

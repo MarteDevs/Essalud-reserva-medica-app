@@ -6,4 +6,26 @@
     </style>
 
     <style name="Theme.EssaluReservaMedica" parent="Base.Theme.EssaluReservaMedica" />
+
+    <!-- ESTO ES LO ÚNICO QUE DEBES AÑADIR AQUÍ -->
+    <style name="AppSearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColor">@color/futuristic_text</item>
+        <item name="android:textColorHint">@color/futuristic_hint</item>
+    </style>
+
+    <!-- ======== INICIO DE CÓDIGO AÑADIDO ======== -->
+    <!-- Tema para la nueva Splash Screen -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- El color de fondo de la pantalla de carga -->
+        <item name="windowSplashScreenBackground">@color/futuristic_background</item>
+
+        <!-- El ícono que se mostrará en el centro. Asegúrate de tener ic_main_app en /drawable -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_main_app</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+
+        <!-- El tema al que se cambiará cuando la app termine de cargar -->
+        <item name="postSplashScreenTheme">@style/Theme.EssaluReservaMedica</item>
+    </style>
+    <!-- ========= FIN DE CÓDIGO AÑADIDO ========= -->
+
 </resources>

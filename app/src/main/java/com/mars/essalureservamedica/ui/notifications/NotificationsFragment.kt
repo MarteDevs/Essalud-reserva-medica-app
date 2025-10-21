@@ -79,16 +79,17 @@ class NotificationsFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.notificaciones.observe(viewLifecycleOwner) { notificaciones ->
             adapter.submitList(notificaciones)
-            
+
             // Mostrar mensaje si no hay notificaciones
             if (notificaciones.isEmpty()) {
-                binding.tvEmptyState.visibility = View.VISIBLE
+                binding.emptyStateLayout.visibility = View.VISIBLE // <-- CORREGIDO
                 binding.recyclerViewNotifications.visibility = View.GONE
             } else {
-                binding.tvEmptyState.visibility = View.GONE
+                binding.emptyStateLayout.visibility = View.GONE // <-- CORREGIDO
                 binding.recyclerViewNotifications.visibility = View.VISIBLE
             }
         }
+
 
         viewModel.countNoLeidas.observe(viewLifecycleOwner) { count ->
             binding.tvUnreadCount.text = "Notificaciones no leídas: $count"

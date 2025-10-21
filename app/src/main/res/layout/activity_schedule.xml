@@ -4,19 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_primary"
+    android:background="@color/futuristic_background"
     tools:context=".ui.schedule.ScheduleActivity">
 
+    <!-- AppBar y Toolbar con el color primario del tema futurista -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/futuristic_primary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/primary_color"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -29,15 +30,17 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="24dp">
 
-            <androidx.cardview.widget.CardView
+            <!-- Tarjeta de información del doctor, estilizada -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardDoctorInfo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -47,22 +50,23 @@
                     android:layout_height="wrap_content"
                     android:padding="16dp">
 
-                    <ImageView
+                    <!-- Imagen circular, como en los otros layouts -->
+                    <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/ivDoctorPhoto"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/ic_doctors"
-                        android:backgroundTint="@color/primary_color"
-                        android:contentDescription="Foto del doctor"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:scaleType="centerCrop"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                        android:src="@drawable/ic_doctor_male" />
 
                     <TextView
                         android:id="@+id/tvDoctorName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:textColor="@color/text_primary"
+                        android:layout_marginStart="16dp"
+                        android:textColor="@color/futuristic_text"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -75,7 +79,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="@color/futuristic_primary"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="@+id/tvDoctorName"
                         app:layout_constraintStart_toStartOf="@+id/tvDoctorName"
@@ -84,27 +88,31 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
+            <!-- Títulos con el color de texto principal del tema -->
             <TextView
                 android:id="@+id/tvDateTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="32dp"
                 android:text="Seleccionar Fecha"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/futuristic_text"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cardDoctorInfo" />
 
+            <!-- Campos de texto estilizados con el tema Material3 y colores del tema -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilDate"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:hint="Fecha de la cita"
+                app:boxStrokeColor="@color/futuristic_primary"
+                app:hintTextColor="@color/futuristic_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvDateTitle">
@@ -115,7 +123,8 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
-                    android:inputType="none" />
+                    android:inputType="none"
+                    android:textColor="@color/futuristic_text" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -125,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="Seleccionar Hora"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/futuristic_text"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -133,11 +142,13 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilTime"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:hint="Hora de la cita"
+                app:boxStrokeColor="@color/futuristic_primary"
+                app:hintTextColor="@color/futuristic_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvTimeTitle">
@@ -148,7 +159,8 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="false"
-                    android:inputType="none" />
+                    android:inputType="none"
+                    android:textColor="@color/futuristic_text" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -158,7 +170,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="Notas Adicionales (Opcional)"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/futuristic_text"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -166,11 +178,13 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilNotes"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:hint="Describe tu consulta o síntomas"
+                app:boxStrokeColor="@color/futuristic_primary"
+                app:hintTextColor="@color/futuristic_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvNotesTitle">
@@ -179,35 +193,42 @@
                     android:id="@+id/etNotes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="top"
                     android:inputType="textMultiLine"
-                    android:lines="3"
-                    android:maxLines="5" />
+                    android:lines="4"
+                    android:maxLines="6"
+                    android:textColor="@color/futuristic_text" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Botón de confirmación con el estilo principal -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnConfirmAppointment"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_marginTop="32dp"
-                android:backgroundTint="@color/primary_color"
+                android:backgroundTint="@color/futuristic_primary"
                 android:text="Confirmar Cita"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
-                app:cornerRadius="8dp"
+                app:cornerRadius="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tilNotes" />
 
+            <!-- ProgressBar centrado en el botón -->
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:elevation="8dp"
+                android:indeterminateTint="@color/white"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/btnConfirmAppointment"
                 app:layout_constraintEnd_toEndOf="@+id/btnConfirmAppointment"
                 app:layout_constraintStart_toStartOf="@+id/btnConfirmAppointment"
-                app:layout_constraintTop_toTopOf="@+id/btnConfirmAppointment" />
+                app:layout_constraintTop_toTopOf="@+id/btnConfirmAppointment"
+                tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
