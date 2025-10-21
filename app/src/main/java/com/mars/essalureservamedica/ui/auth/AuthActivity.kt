@@ -10,6 +10,7 @@ import com.mars.essalureservamedica.MainActivity
 import com.mars.essalureservamedica.R
 import com.mars.essalureservamedica.databinding.ActivityAuthBinding
 import com.mars.essalureservamedica.utils.SessionManager
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class AuthActivity : AppCompatActivity() {
 
@@ -19,6 +20,8 @@ class AuthActivity : AppCompatActivity() {
     private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         
         sessionManager = SessionManager(this)

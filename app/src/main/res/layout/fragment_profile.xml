@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:background="@color/futuristic_background"
+    android:fillViewport="true"
+    tools:context=".ui.main.ProfileFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,26 +18,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center"
+            android:orientation="vertical"
             android:layout_marginBottom="32dp">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/ic_person"
-                android:background="@drawable/circle_background"
-                android:padding="16dp"
                 android:layout_marginBottom="16dp"
-                app:tint="@color/primary_color" />
+                android:background="@color/white"
+                android:padding="18dp"
+                android:src="@drawable/ic_person"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                app:tint="@color/futuristic_primary" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Mi Perfil"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary" />
+                android:textColor="@color/futuristic_primary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -42,39 +46,47 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:text="Información Personal"
+            android:textColor="@color/futuristic_text"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="16dp" />
+            android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNombreCompleto"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:hint="Nombre Completo"
+            app:boxStrokeColor="@color/futuristic_primary"
+            app:hintTextColor="@color/futuristic_primary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNombreCompleto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre Completo"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/futuristic_text" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEmail"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:hint="Correo Electrónico"
+            app:boxStrokeColor="@color/futuristic_primary"
+            app:hintTextColor="@color/futuristic_primary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Correo Electrónico"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:textColor="@color/futuristic_text" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -82,90 +94,112 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:text="Cambiar Contraseña"
+            android:textColor="@color/futuristic_text"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="16dp" />
+            android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCurrentPassword"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:passwordToggleEnabled="true">
+            android:hint="Contraseña Actual"
+            app:boxStrokeColor="@color/futuristic_primary"
+            app:hintTextColor="@color/futuristic_primary"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/futuristic_primary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etCurrentPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Contraseña Actual"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:textColor="@color/futuristic_text" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNewPassword"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:passwordToggleEnabled="true">
+            android:hint="Nueva Contraseña (opcional)"
+            app:boxStrokeColor="@color/futuristic_primary"
+            app:hintTextColor="@color/futuristic_primary"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/futuristic_primary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNewPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nueva Contraseña (opcional)"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:textColor="@color/futuristic_text" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilConfirmPassword"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:passwordToggleEnabled="true">
+            android:hint="Confirmar Nueva Contraseña"
+            app:boxStrokeColor="@color/futuristic_primary"
+            app:hintTextColor="@color/futuristic_primary"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/futuristic_primary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etConfirmPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Confirmar Nueva Contraseña"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:textColor="@color/futuristic_text" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Botones -->
-        <Button
-            android:id="@+id/btnUpdateProfile"
+        <!-- Botones y ProgressBar -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Actualizar Perfil"
-            android:textColor="@android:color/white"
-            android:backgroundTint="@color/primary_color"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.Button" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
 
-        <Button
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUpdateProfile"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:backgroundTint="@color/futuristic_primary"
+                android:text="Actualizar Perfil"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:cornerRadius="16dp" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:elevation="8dp"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </FrameLayout>
+
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogout"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Cerrar Sesión"
-            android:textColor="@color/primary_color"
-            android:backgroundTint="@android:color/transparent"
-            android:strokeColor="@color/primary_color"
-            android:strokeWidth="2"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
-
-        <!-- Progress Bar -->
-        <ProgressBar
-            android:id="@+id/progressBar"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:visibility="gone" />
+            android:layout_gravity="center_horizontal"
+            android:text="Cerrar Sesión"
+            android:textColor="@color/error"
+            android:textSize="14sp" />
 
     </LinearLayout>
 

@@ -9,6 +9,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.mars.essalureservamedica.databinding.ActivityMainBinding
 import com.mars.essalureservamedica.ui.auth.AuthActivity
 import com.mars.essalureservamedica.utils.SessionManager
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         
         sessionManager = SessionManager(this)

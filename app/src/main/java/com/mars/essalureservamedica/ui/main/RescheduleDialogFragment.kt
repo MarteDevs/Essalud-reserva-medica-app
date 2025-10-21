@@ -5,8 +5,10 @@ import android.app.Dialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mars.essalureservamedica.data.dao.CitaWithDoctorInfo
 import com.mars.essalureservamedica.databinding.DialogRescheduleBinding
 import java.text.SimpleDateFormat
@@ -23,8 +25,12 @@ class RescheduleDialogFragment : DialogFragment() {
     private var selectedTime: Calendar? = null
     private var citaToReschedule: CitaWithDoctorInfo? = null
 
-    private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    // Formatos para mostrar en la UI
+    private val displayDateFormat = SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy", Locale("es", "ES"))
+    private val displayTimeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+    // Formato para la información de la cita actual
+    private val currentAppointmentFormat = SimpleDateFormat("dd MMM yyyy - hh:mm a", Locale("es", "ES"))
+
 
     companion object {
         private const val ARG_CITA = "cita"
@@ -40,15 +46,17 @@ class RescheduleDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogRescheduleBinding.inflate(layoutInflater)
-        
+
         citaToReschedule = arguments?.getSerializable(ARG_CITA) as? CitaWithDoctorInfo
 
         setupViews()
         setupClickListeners()
 
-        return androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        // Usar MaterialAlertDialogBuilder para un estilo consistente
+        return MaterialAlertDialogBuilder(requireContext())
             .setView(binding.root)
-            .setTitle("Reprogramar Cita")
+            // El título ya está en el layout, no es necesario aquí.
+            // .setTitle("Reprogramar Cita")
             .setPositiveButton("Confirmar") { _, _ ->
                 reprogramarCita()
             }
@@ -58,18 +66,22 @@ class RescheduleDialogFragment : DialogFragment() {
 
     private fun setupViews() {
         citaToReschedule?.let { cita ->
-            binding.tvCurrentAppointment.text = "Cita actual: ${dateFormat.format(cita.fechaHora)} a las ${timeFormat.format(cita.fechaHora)}"
+            // Usar el nuevo formato para el TextView de la cita actual
+            binding.tvCurrentAppointment.text = currentAppointmentFormat.format(cita.fechaHora)
         }
     }
 
     private fun setupClickListeners() {
-        binding.btnSelectDate.setOnClickListener {
+        // --- INICIO DE CAMBIOS ---
+        // Ahora el listener se asigna al TextInputEditText, no a un botón
+        binding.etSelectDate.setOnClickListener {
             showDatePicker()
         }
 
-        binding.btnSelectTime.setOnClickListener {
+        binding.etSelectTime.setOnClickListener {
             showTimePicker()
         }
+        // --- FIN DE CAMBIOS ---
     }
 
     private fun showDatePicker() {
@@ -82,8 +94,12 @@ class RescheduleDialogFragment : DialogFragment() {
                 selectedDate = Calendar.getInstance().apply {
                     set(year, month, dayOfMonth)
                 }
-                binding.tvSelectedDate.text = "Fecha: ${dateFormat.format(selectedDate!!.time)}"
-                binding.tvSelectedDate.visibility = android.view.View.VISIBLE
+                // --- INICIO DE CAMBIOS ---
+                // Mostrar el texto dentro del EditText, no en un TextView separado
+                binding.etSelectDate.setText(displayDateFormat.format(selectedDate!!.time))
+                // Ya no necesitamos los tvSelectedDate/Time
+                // binding.tvSelectedDate.visibility = android.view.View.GONE
+                // --- FIN DE CAMBIOS ---
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -95,7 +111,7 @@ class RescheduleDialogFragment : DialogFragment() {
 
     private fun showTimePicker() {
         val calendar = Calendar.getInstance()
-        
+
         TimePickerDialog(
             requireContext(),
             { _, hourOfDay, minute ->
@@ -103,12 +119,16 @@ class RescheduleDialogFragment : DialogFragment() {
                     set(Calendar.HOUR_OF_DAY, hourOfDay)
                     set(Calendar.MINUTE, minute)
                 }
-                binding.tvSelectedTime.text = "Hora: ${timeFormat.format(selectedTime!!.time)}"
-                binding.tvSelectedTime.visibility = android.view.View.VISIBLE
+                // --- INICIO DE CAMBIOS ---
+                // Mostrar el texto dentro del EditText
+                binding.etSelectTime.setText(displayTimeFormat.format(selectedTime!!.time))
+                // Ya no necesitamos los tvSelectedDate/Time
+                // binding.tvSelectedTime.visibility = android.view.View.GONE
+                // --- FIN DE CAMBIOS ---
             },
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
-            true
+            false // Usar formato 12h (AM/PM)
         ).show()
     }
 
@@ -119,11 +139,9 @@ class RescheduleDialogFragment : DialogFragment() {
         }
 
         val nuevaFechaHora = Calendar.getInstance().apply {
-            set(Calendar.YEAR, selectedDate!!.get(Calendar.YEAR))
-            set(Calendar.MONTH, selectedDate!!.get(Calendar.MONTH))
-            set(Calendar.DAY_OF_MONTH, selectedDate!!.get(Calendar.DAY_OF_MONTH))
-            set(Calendar.HOUR_OF_DAY, selectedTime!!.get(Calendar.HOUR_OF_DAY))
-            set(Calendar.MINUTE, selectedTime!!.get(Calendar.MINUTE))
+            time = selectedDate!!.time // Copia la fecha
+            set(Calendar.HOUR_OF_DAY, selectedTime!!.get(Calendar.HOUR_OF_DAY)) // Añade la hora
+            set(Calendar.MINUTE, selectedTime!!.get(Calendar.MINUTE)) // Añade los minutos
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.time

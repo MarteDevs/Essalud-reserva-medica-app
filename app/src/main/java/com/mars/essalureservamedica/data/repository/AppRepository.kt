@@ -2,6 +2,7 @@ package com.mars.essalureservamedica.data.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.mars.essalureservamedica.R
 import com.mars.essalureservamedica.data.database.AppDatabase
 import com.mars.essalureservamedica.data.dao.CitaWithDoctorInfo
 import com.mars.essalureservamedica.data.dao.CalificacionConDetalles
@@ -188,57 +189,6 @@ class AppRepository(private val database: AppDatabase) {
             citaId = citaId
         )
         insertNotificacion(notificacion)
-    }
-
-    // Sample data population
-    suspend fun populateSampleData() {
-        // Check if data already exists
-        val existingDoctors = database.doctorDao().getAllDoctorsSync()
-        if (existingDoctors.isNotEmpty()) return
-
-        // Sample doctors
-        val sampleDoctors = listOf(
-            Doctor(
-                nombre = "Dr. María González",
-                especialidad = "Cardiología",
-                experiencia = "15 años de experiencia",
-                disponibilidad = "Lunes a Viernes 8:00-17:00",
-                foto = null
-            ),
-            Doctor(
-                nombre = "Dr. Carlos Rodríguez",
-                especialidad = "Neurología",
-                experiencia = "12 años de experiencia",
-                disponibilidad = "Martes a Sábado 9:00-18:00",
-                foto = null
-            ),
-            Doctor(
-                nombre = "Dra. Ana Martínez",
-                especialidad = "Pediatría",
-                experiencia = "8 años de experiencia",
-                disponibilidad = "Lunes a Viernes 7:00-15:00",
-                foto = null
-            ),
-            Doctor(
-                nombre = "Dr. Luis Fernández",
-                especialidad = "Dermatología",
-                experiencia = "20 años de experiencia",
-                disponibilidad = "Miércoles a Domingo 10:00-19:00",
-                foto = null
-            ),
-            Doctor(
-                nombre = "Dra. Carmen López",
-                especialidad = "Ginecología",
-                experiencia = "18 años de experiencia",
-                disponibilidad = "Lunes a Viernes 8:30-16:30",
-                foto = null
-            )
-        )
-
-        // Insert sample doctors
-        sampleDoctors.forEach { doctor ->
-            database.doctorDao().insert(doctor)
-        }
     }
 
     companion object {

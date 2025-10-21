@@ -10,29 +10,30 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.EssaluReservaMedica"
+        android:theme="@style/Theme.App.Starting"
         android:enableOnBackInvokedCallback="true">
-        
+
         <activity
             android:name=".ui.auth.AuthActivity"
             android:exported="false" />
-            
+
         <activity
             android:name=".ui.doctor.DoctorDetailActivity"
             android:exported="false"
-            android:parentActivityName=".MainActivity" />
-            
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.EssaluReservaMedica" />
+
         <activity
             android:name=".ui.schedule.ScheduleActivity"
             android:exported="false"
-            android:parentActivityName=".ui.doctor.DoctorDetailActivity" />
-            
+            android:parentActivityName=".ui.doctor.DoctorDetailActivity"
+            android:theme="@style/Theme.EssaluReservaMedica" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
