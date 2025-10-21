@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "621251191461",
+    "project_id": "kardia-medical-app",
+    "storage_bucket": "kardia-medical-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:621251191461:android:bbdea3f2f1813e3c1ce34c",
+        "android_client_info": {
+          "package_name": "com.mars.essalureservamedica"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJzZJI9fXYzklf1cOCeCOjNL8UiWUXlN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
