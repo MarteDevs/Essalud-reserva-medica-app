@@ -106,7 +106,7 @@ app/
 
 1. **Clonar el repositorio**
    ```bash
-   git clone [https://github.com/MarteDevs/Essalud-reserva-medica-app.git]
+   git clone (https://github.com/MarteDevs/Essalud-reserva-medica-app.git)
    cd essalud-reserva-medica-app
    ```
 
