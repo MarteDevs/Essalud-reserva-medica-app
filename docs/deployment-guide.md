@@ -489,6 +489,115 @@ deploy_play_store:
     - tags
 ```
 
+## Configuración de Firebase
+
+### 1. Configuración Inicial de Firebase
+```bash
+# Instalar Firebase CLI
+npm install -g firebase-tools
+
+# Inicializar sesión
+firebase login
+
+# Inicializar proyecto Firebase
+firebase init
+```
+
+### 2. Configuración de Firestore Indexes
+
+**IMPORTANTE**: Los índices de Firestore deben configurarse antes del primer despliegue para evitar errores `FAILED_PRECONDITION`.
+
+#### Opción A: Configuración Manual (Recomendado para producción)
+1. **Acceder a Firebase Console**
+   - Ir a [Firebase Console](https://console.firebase.google.com/)
+   - Seleccionar el proyecto
+   - Navegar a Firestore Database → Índices
+
+2. **Crear Índices Compuestos**
+   
+   **Para colección `appointments`:**
+   - Campo: `usuarioId` (Ascendente)
+   - Campo: `fecha` (Descendente)
+   
+   **Para colección `notifications`:**
+   - Campo: `usuarioId` (Ascendente) + `fechaCreacion` (Descendente)
+   - Campo: `usuarioId` (Ascendente) + `leida` (Ascendente) + `fechaCreacion` (Descendente)
+
+#### Opción B: Configuración Automática
+```bash
+# Inicializar Firestore
+firebase init firestore
+
+# Desplegar índices desde firestore.indexes.json
+firebase deploy --only firestore:indexes
+```
+
+**Archivo firestore.indexes.json:**
+```json
+{
+  "indexes": [
+    {
+      "collectionGroup": "appointments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "usuarioId", "order": "ASCENDING"},
+        {"fieldPath": "fecha", "order": "DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "notifications", 
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "usuarioId", "order": "ASCENDING"},
+        {"fieldPath": "fechaCreacion", "order": "DESCENDING"}
+      ]
+    }
+  ]
+}
+```
+
+### 3. Reglas de Seguridad de Firestore
+```bash
+# Desplegar reglas de seguridad
+firebase deploy --only firestore:rules
+```
+
+**Archivo firestore.rules:**
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Colecciones principales
+    match /appointments/{appointmentId} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid == resource.data.usuarioId;
+    }
+    
+    match /ratings/{ratingId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    match /notifications/{notificationId} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid == resource.data.usuarioId;
+    }
+  }
+}
+```
+
+### 4. Verificación de Configuración
+```bash
+# Verificar configuración de Firebase
+firebase projects:list
+
+# Verificar estado de Firestore
+firebase firestore:indexes
+
+# Probar reglas de seguridad
+firebase emulators:start --only firestore
+```
+
 ## Distribución Interna
 
 ### 1. Firebase App Distribution

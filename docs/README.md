@@ -38,8 +38,14 @@
 
 ### Base de Datos
 - **Room Database**: Base de datos local SQLite
+- **Firebase Firestore**: Base de datos en la nube con sincronización en tiempo real
 - **Coroutines**: Para operaciones asíncronas
 - **TypeConverters**: Para manejo de tipos de datos complejos
+
+### Firebase Services
+- **Firebase Authentication**: Autenticación de usuarios
+- **Firebase Firestore**: Base de datos NoSQL en tiempo real
+- **Firebase Analytics**: Análisis de uso de la aplicación
 
 ### Interfaz de Usuario
 - **Material Design**: Siguiendo las guías de diseño de Google
@@ -91,18 +97,63 @@ app/
 
 ## Instalación y Configuración
 
+### Requisitos Previos
+- **Android Studio**: Última versión estable
+- **Firebase CLI**: Para configuración de índices (opcional)
+- **Cuenta de Firebase**: Para servicios en la nube
+
+### Pasos de Instalación
+
 1. **Clonar el repositorio**
-2. **Abrir en Android Studio**
-3. **Sincronizar dependencias de Gradle**
-4. **Ejecutar en dispositivo o emulador**
+   ```bash
+   git clone [URL_DEL_REPOSITORIO]
+   cd essalud-reserva-medica-app
+   ```
+
+2. **Configurar Firebase**
+   - Crear proyecto en [Firebase Console](https://console.firebase.google.com/)
+   - Descargar `google-services.json` y colocarlo en `app/`
+   - Habilitar Authentication y Firestore
+
+3. **Configurar Índices de Firestore**
+   
+   **Opción A: Manual (Recomendado)**
+   - Ir a Firebase Console → Firestore Database → Índices
+   - Crear índice para colección `appointments`:
+     - Campo: `usuarioId` (Ascendente) + `fecha` (Descendente)
+   
+   **Opción B: Automática**
+   ```bash
+   npm install -g firebase-tools
+   firebase login
+   firebase init firestore
+   firebase deploy --only firestore:indexes
+   ```
+
+4. **Abrir en Android Studio**
+   - Abrir el proyecto en Android Studio
+   - Sincronizar dependencias de Gradle
+   - Esperar a que termine la indexación
+
+5. **Ejecutar la aplicación**
+   - Conectar dispositivo Android o iniciar emulador
+   - Ejecutar la aplicación desde Android Studio
+
+### Configuración Adicional
+
+- **Reglas de Firestore**: Las reglas de seguridad se configuran automáticamente
+- **Migración de datos**: La primera ejecución migrará datos de colecciones españolas a inglesas
+- **Índices**: Los índices compuestos son necesarios para evitar errores `FAILED_PRECONDITION`
 
 ## Documentación Adicional
 
 - [Arquitectura de la Aplicación](./architecture.md)
 - [Modelo de Base de Datos](./database.md)
+- [Migración a Firebase](./firebase-migration.md)
 - [Interfaz de Usuario](./ui-components.md)
 - [API y Funcionalidades](./api-features.md)
 - [Guía de Desarrollo](./development-guide.md)
+- [Guía de Despliegue](./deployment-guide.md)
 
 ## Versión
 

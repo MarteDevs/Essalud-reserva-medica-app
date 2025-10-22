@@ -987,6 +987,142 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
+## Paso 13: Migración de Colecciones (Español → Inglés)
+
+### 13.1 Problema de Nomenclatura
+
+Durante el desarrollo inicial, las colecciones se crearon con nombres en español:
+- `citas` → `appointments`
+- `calificaciones` → `ratings`
+- `notificaciones` → `notifications`
+
+### 13.2 Servicio de Migración de Colecciones
+
+Se implementó `CollectionMigrationService.kt` para migrar datos automáticamente:
+
+```kotlin
+class CollectionMigrationService {
+    private val db = FirebaseFirestore.getInstance()
+    
+    suspend fun migrateCollections(): Boolean {
+        return try {
+            migrateCitasToAppointments() &&
+            migrateCalificacionesToRatings() &&
+            migrateNotificacionesToNotifications()
+        } catch (e: Exception) {
+            Log.e("CollectionMigration", "Error en migración: ${e.message}")
+            false
+        }
+    }
+    
+    private suspend fun migrateCitasToAppointments(): Boolean {
+        // Migra datos de 'citas' a 'appointments'
+        val oldCollection = db.collection("citas")
+        val newCollection = db.collection("appointments")
+        
+        val snapshot = oldCollection.get().await()
+        
+        for (document in snapshot.documents) {
+            val data = document.data
+            if (data != null) {
+                newCollection.document(document.id).set(data).await()
+            }
+        }
+        
+        return true
+    }
+}
+```
+
+### 13.3 Índices Requeridos
+
+**IMPORTANTE**: Las nuevas colecciones requieren índices compuestos para evitar errores `FAILED_PRECONDITION`.
+
+#### Índices Manuales (Consola Firebase)
+
+1. **Para colección `appointments`:**
+   - Campo: `usuarioId` (Ascendente) + `fecha` (Descendente)
+
+2. **Para colección `notifications`:**
+   - Campo: `usuarioId` (Ascendente) + `fechaCreacion` (Descendente)
+   - Campo: `usuarioId` (Ascendente) + `leida` (Ascendente) + `fechaCreacion` (Descendente)
+
+#### Configuración Automática
+
+Archivo `firestore.indexes.json` en la raíz del proyecto:
+
+```json
+{
+  "indexes": [
+    {
+      "collectionGroup": "appointments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "usuarioId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Desplegar con:
+```bash
+firebase deploy --only firestore:indexes
+```
+
+### 13.4 Reglas de Seguridad Actualizadas
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Colecciones en inglés (nuevas)
+    match /appointments/{appointmentId} {
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == resource.data.usuarioId || 
+         request.auth.uid == resource.data.doctorId);
+    }
+    
+    match /ratings/{ratingId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    match /notifications/{notificationId} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid == resource.data.usuarioId;
+    }
+    
+    // Colecciones temporales (para migración)
+    match /citas/{citaId} {
+      allow read: if request.auth != null;
+    }
+    
+    match /calificaciones/{calificacionId} {
+      allow read: if request.auth != null;
+    }
+    
+    match /notificaciones/{notificacionId} {
+      allow read: if request.auth != null;
+    }
+  }
+}
+```
+
+### 13.5 Proceso de Migración
+
+1. **Actualizar código** para usar nombres en inglés
+2. **Crear índices** en Firebase Console
+3. **Ejecutar migración** automática en la app
+4. **Verificar datos** en las nuevas colecciones
+5. **Eliminar colecciones antiguas** (opcional)
+
 ## Consideraciones Importantes
 
 ### Costos de Firebase
@@ -1008,5 +1144,11 @@ class MainActivity : AppCompatActivity() {
 - Configurar exportaciones automáticas
 - Implementar estrategia de backup
 - Probar procedimientos de recuperación
+
+### Migración de Colecciones
+- **Crear índices ANTES** de usar las nuevas colecciones
+- **Mantener reglas temporales** durante la migración
+- **Verificar integridad** de datos migrados
+- **Eliminar colecciones antiguas** solo después de confirmar éxito
 
 Esta migración transformará Kardia en una aplicación moderna, escalable y con sincronización en tiempo real, aprovechando todo el poder de Firebase.

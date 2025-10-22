@@ -355,7 +355,100 @@ class DateConverter {
 - **Índices estratégicos**: En campos de búsqueda frecuente
 - **Paginación**: Para listas grandes (implementable con Paging 3)
 
-## Migración de Base de Datos
+## Firebase Firestore (Base de Datos en la Nube)
+
+### Colecciones Principales
+
+La aplicación utiliza **Firebase Firestore** como base de datos principal en la nube con las siguientes colecciones:
+
+#### 1. appointments (Citas Médicas)
+```javascript
+{
+  "id": "string",
+  "usuarioId": "string",
+  "doctorId": "string", 
+  "fecha": "timestamp",
+  "hora": "string",
+  "estado": "string", // "PENDIENTE", "CONFIRMADA", "COMPLETADA", "CANCELADA"
+  "notas": "string",
+  "fechaCreacion": "timestamp"
+}
+```
+
+#### 2. ratings (Calificaciones)
+```javascript
+{
+  "id": "string",
+  "usuarioId": "string",
+  "doctorId": "string",
+  "citaId": "string",
+  "puntuacion": "number", // 1-5
+  "comentario": "string",
+  "fechaCalificacion": "timestamp"
+}
+```
+
+#### 3. notifications (Notificaciones)
+```javascript
+{
+  "id": "string",
+  "usuarioId": "string",
+  "titulo": "string",
+  "mensaje": "string",
+  "tipo": "string", // "CITA_CONFIRMADA", "RECORDATORIO", "GENERAL"
+  "leida": "boolean",
+  "fechaCreacion": "timestamp"
+}
+```
+
+### Índices Compuestos Requeridos
+
+Para evitar errores `FAILED_PRECONDITION`, se requieren los siguientes índices:
+
+#### appointments
+- `usuarioId` (Ascendente) + `fecha` (Descendente)
+
+#### notifications  
+- `usuarioId` (Ascendente) + `fechaCreacion` (Descendente)
+- `usuarioId` (Ascendente) + `leida` (Ascendente) + `fechaCreacion` (Descendente)
+
+### Configuración de Índices
+
+Los índices se pueden crear de dos formas:
+
+#### 1. Manual (Firebase Console)
+1. Ir a Firebase Console → Firestore Database → Índices
+2. Crear los índices compuestos según la especificación anterior
+
+#### 2. Automática (firestore.indexes.json)
+```json
+{
+  "indexes": [
+    {
+      "collectionGroup": "appointments",
+      "queryScope": "COLLECTION", 
+      "fields": [
+        {"fieldPath": "usuarioId", "order": "ASCENDING"},
+        {"fieldPath": "fecha", "order": "DESCENDING"}
+      ]
+    }
+  ]
+}
+```
+
+Desplegar con: `firebase deploy --only firestore:indexes`
+
+### Migración de Colecciones
+
+La aplicación incluye un sistema de migración automática que convierte las colecciones españolas a inglesas:
+
+- `citas` → `appointments`
+- `calificaciones` → `ratings` 
+- `notificaciones` → `notifications`
+
+Ver [firebase-migration.md](firebase-migration.md) para detalles completos del proceso de migración.
+
+## Migración de Base de Datos Local
 
 Actualmente configurada con `fallbackToDestructiveMigration()` para desarrollo. En producción se implementarían migraciones específicas:
 
