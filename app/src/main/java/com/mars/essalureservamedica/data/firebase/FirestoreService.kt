@@ -14,9 +14,9 @@ class FirestoreService {
     // Colecciones
     private val usersCollection = db.collection("users")
     private val doctorsCollection = db.collection("doctors")
-    private val citasCollection = db.collection("citas")
-    private val calificacionesCollection = db.collection("calificaciones")
-    private val notificacionesCollection = db.collection("notificaciones")
+    private val citasCollection = db.collection("appointments")
+    private val calificacionesCollection = db.collection("ratings")
+    private val notificacionesCollection = db.collection("notifications")
 
     // Usuarios
     suspend fun createUser(user: UserFirestore): Result<String> = try {

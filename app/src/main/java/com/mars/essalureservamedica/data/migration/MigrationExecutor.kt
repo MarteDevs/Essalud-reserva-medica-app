@@ -26,6 +26,7 @@ class MigrationExecutor(
         notificacionDao = database.notificacionDao(),
         firestoreService = firestoreService
     )
+    private val collectionMigrationService = CollectionMigrationService()
 
     fun executeMigration(
         onProgress: (String) -> Unit = {},
@@ -99,6 +100,15 @@ class MigrationExecutor(
                 val notificacionesResult = migrationService.migrateNotificaciones()
                 if (!notificacionesResult) {
                     throw Exception("Error al migrar notificaciones - Verifica los permisos de Firestore")
+                }
+
+                // Migrar colecciones de español a inglés
+                withContext(Dispatchers.Main) {
+                    onProgress("Migrando colecciones a nombres en inglés...")
+                }
+                val collectionMigrationResult = collectionMigrationService.migrateCollections()
+                if (!collectionMigrationResult) {
+                    Log.w("MigrationExecutor", "Advertencia: No se pudieron migrar todas las colecciones, pero continuando...")
                 }
 
                 // Verificar migración

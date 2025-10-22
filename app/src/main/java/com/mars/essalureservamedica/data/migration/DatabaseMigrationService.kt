@@ -143,9 +143,9 @@ class DatabaseMigrationService @Inject constructor(
         mapOf(
             "usuarios" to verifyUsersMigration(),
             "doctores" to verifyDoctorsMigration(),
-            "citas" to verifyCitasMigration(),
-            "calificaciones" to verifyCalificacionesMigration(),
-            "notificaciones" to verifyNotificacionesMigration()
+            "appointments" to verifyCitasMigration(),
+            "ratings" to verifyCalificacionesMigration(),
+            "notifications" to verifyNotificacionesMigration()
         )
     }
 
