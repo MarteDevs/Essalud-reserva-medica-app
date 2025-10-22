@@ -38,13 +38,18 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@color/futuristic_text"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/tvStatus"
+            app:layout_constraintEnd_toStartOf="@+id/chipStatus"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/ivAppointmentIcon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Dr. Juan Pérez" />
+            tools:text="Dra. Sofía Gabriela Torres de la Peña" />
+
 
         <TextView
             android:id="@+id/tvSpecialty"
@@ -63,8 +68,8 @@
             style="@style/Widget.Material3.Chip.Assist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            android:focusable="false"
+            android:clickable="true"
+            android:focusable="true"
             android:textColor="@color/futuristic_secondary"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -72,9 +77,12 @@
             app:chipCornerRadius="8dp"
             app:chipMinHeight="28dp"
             app:chipStrokeWidth="0dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/tvDoctorName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Confirmada" />
+            app:layout_constraintStart_toEndOf="@+id/tvDoctorName"
+            tools:text="Confirmada"
+            tools:tooltipText="Estado de la cita: Confirmada" />
+
 
         <!-- Separador para una mejor división visual -->
         <View

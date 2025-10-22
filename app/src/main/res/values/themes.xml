@@ -1,34 +1,42 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.EssaluReservaMedica" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
-
     <style name="Theme.EssaluReservaMedica" parent="Base.Theme.EssaluReservaMedica" />
-
-    <!-- ESTO ES LO ÚNICO QUE DEBES AÑADIR AQUÍ -->
     <style name="AppSearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="android:textColor">@color/futuristic_text</item>
         <item name="android:textColorHint">@color/futuristic_hint</item>
     </style>
 
-<<<<<<< HEAD
-    <!-- ======== INICIO DE CÓDIGO AÑADIDO ======== -->
-    <!-- Tema para la nueva Splash Screen -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <!-- El color de fondo de la pantalla de carga -->
         <item name="windowSplashScreenBackground">@color/futuristic_background</item>
-
-        <!-- El ícono que se mostrará en el centro. Asegúrate de tener ic_main_app en /drawable -->
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_main_app</item>
         <item name="windowSplashScreenAnimationDuration">1000</item>
-
-        <!-- El tema al que se cambiará cuando la app termine de cargar -->
         <item name="postSplashScreenTheme">@style/Theme.EssaluReservaMedica</item>
     </style>
-    <!-- ========= FIN DE CÓDIGO AÑADIDO ========= -->
 
-=======
->>>>>>> 0897432c7bfa92bf3ec247866c5fdaa5da99bb5f
+    <style name="Theme.App.Dialog.Futuristic" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/white</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/DialogTitleTextStyle</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/DialogBodyTextStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogPositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogNegativeButtonStyle</item>
+    </style>
+
+    <style name="DialogTitleTextStyle" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:textColor">@color/futuristic_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DialogBodyTextStyle" parent="MaterialAlertDialog.Material3.Body.Text">
+        <item name="android:textColor">@color/futuristic_text</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
+
+    <style name="DialogPositiveButtonStyle" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/futuristic_primary</item>
+    </style>
+
+    <style name="DialogNegativeButtonStyle" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/futuristic_hint</item>
+    </style>
 </resources>
