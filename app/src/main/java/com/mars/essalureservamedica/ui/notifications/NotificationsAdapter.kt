@@ -10,15 +10,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mars.essalureservamedica.R
-import com.mars.essalureservamedica.data.entity.Notificacion
+import com.mars.essalureservamedica.data.firebase.models.NotificacionFirestore
 import com.mars.essalureservamedica.databinding.ItemNotificationBinding // Importante: usar ViewBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class NotificationsAdapter(
-    private val onNotificationClick: (Notificacion) -> Unit
-) : ListAdapter<Notificacion, NotificationsAdapter.NotificationViewHolder>(NotificationDiffCallback()) {
+    private val onNotificationClick: (NotificacionFirestore) -> Unit
+) : ListAdapter<NotificacionFirestore, NotificationsAdapter.NotificationViewHolder>(NotificationDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
         // Usar ViewBinding para más seguridad y limpieza
@@ -39,13 +39,13 @@ class NotificationsAdapter(
         private val binding: ItemNotificationBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(notificacion: Notificacion) {
+        fun bind(notificacion: NotificacionFirestore) {
             binding.apply { // 'apply' nos permite acceder a las vistas del binding directamente
                 tvNotificationTitle.text = notificacion.titulo
                 tvNotificationMessage.text = notificacion.mensaje
 
                 // Formatear la fecha para que sea relativa (ej: "hace 5m", "hace 2h")
-                tvNotificationDate.text = getRelativeTime(notificacion.fechaCreacion)
+                tvNotificationDate.text = getRelativeTime(Date(notificacion.fechaCreacion))
 
                 // --- SE ELIMINÓ TODA LA LÓGICA DE 'tvNotificationType' ---
 
@@ -88,12 +88,12 @@ class NotificationsAdapter(
         }
     }
 
-    class NotificationDiffCallback : DiffUtil.ItemCallback<Notificacion>() {
-        override fun areItemsTheSame(oldItem: Notificacion, newItem: Notificacion): Boolean {
+    class NotificationDiffCallback : DiffUtil.ItemCallback<NotificacionFirestore>() {
+        override fun areItemsTheSame(oldItem: NotificacionFirestore, newItem: NotificacionFirestore): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Notificacion, newItem: Notificacion): Boolean {
+        override fun areContentsTheSame(oldItem: NotificacionFirestore, newItem: NotificacionFirestore): Boolean {
             return oldItem == newItem
         }
     }

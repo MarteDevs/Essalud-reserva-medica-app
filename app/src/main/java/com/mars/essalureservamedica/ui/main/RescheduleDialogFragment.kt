@@ -9,7 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.mars.essalureservamedica.data.dao.CitaWithDoctorInfo
+import com.mars.essalureservamedica.data.firebase.models.CitaWithDoctorFirestore
 import com.mars.essalureservamedica.databinding.DialogRescheduleBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,7 +23,7 @@ class RescheduleDialogFragment : DialogFragment() {
 
     private var selectedDate: Calendar? = null
     private var selectedTime: Calendar? = null
-    private var citaToReschedule: CitaWithDoctorInfo? = null
+    private var citaToReschedule: CitaWithDoctorFirestore? = null
 
     // Formatos para mostrar en la UI
     private val displayDateFormat = SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy", Locale("es", "ES"))
@@ -35,7 +35,7 @@ class RescheduleDialogFragment : DialogFragment() {
     companion object {
         private const val ARG_CITA = "cita"
 
-        fun newInstance(cita: CitaWithDoctorInfo): RescheduleDialogFragment {
+        fun newInstance(cita: CitaWithDoctorFirestore): RescheduleDialogFragment {
             val fragment = RescheduleDialogFragment()
             val args = Bundle()
             args.putSerializable(ARG_CITA, cita)
@@ -47,7 +47,7 @@ class RescheduleDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogRescheduleBinding.inflate(layoutInflater)
 
-        citaToReschedule = arguments?.getSerializable(ARG_CITA) as? CitaWithDoctorInfo
+        citaToReschedule = arguments?.getSerializable(ARG_CITA) as? CitaWithDoctorFirestore
 
         setupViews()
         setupClickListeners()
@@ -147,7 +147,9 @@ class RescheduleDialogFragment : DialogFragment() {
         }.time
 
         citaToReschedule?.let { cita ->
-            viewModel.reprogramarCita(cita.id, nuevaFechaHora)
+            val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val nuevaHora = timeFormat.format(nuevaFechaHora)
+            viewModel.reprogramarCita(cita.id, nuevaFechaHora.time, nuevaHora)
         }
     }
 

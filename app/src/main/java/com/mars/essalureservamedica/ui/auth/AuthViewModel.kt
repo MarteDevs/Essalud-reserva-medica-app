@@ -5,9 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.mars.essalureservamedica.data.database.AppDatabase
-import com.mars.essalureservamedica.data.entity.User
-import com.mars.essalureservamedica.data.repository.AppRepository
 import com.mars.essalureservamedica.data.firebase.FirebaseAuthService
 import com.mars.essalureservamedica.data.firebase.FirestoreService
 import com.mars.essalureservamedica.data.firebase.models.UserFirestore
@@ -16,7 +13,6 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
     
-    private val repository: AppRepository
     private val sessionManager: SessionManager = SessionManager(application)
     private val firebaseAuthService: FirebaseAuthService = FirebaseAuthService()
     private val firestoreService: FirestoreService = FirestoreService()
@@ -27,10 +23,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
     
-    init {
-        repository = AppRepository.getInstance(application)
-    }
-    
     fun register(nombreCompleto: String, email: String, password: String) {
         if (!validateRegistrationInput(nombreCompleto, email, password)) {
             return
@@ -39,15 +31,15 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _isLoading.value = true
         viewModelScope.launch {
             try {
-                // Verificar si el usuario ya existe en Room
-                val existingUser = repository.getUserByEmail(email)
-                if (existingUser != null) {
+                // Verificar si el usuario ya existe en Firestore
+                val existingUserResult = firestoreService.getUserByEmail(email)
+                if (existingUserResult.isSuccess && existingUserResult.getOrNull() != null) {
                     _authResult.value = AuthResult.Error("El email ya está registrado")
                     _isLoading.value = false
                     return@launch
                 }
                 
-                // Intentar registro con Firebase primero
+                // Registro con Firebase Auth
                 val firebaseResult = firebaseAuthService.signUpWithEmailPassword(email, password)
                 
                 if (firebaseResult.isSuccess) {
@@ -62,22 +54,14 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                         
                         val firestoreResult = firestoreService.createUser(userFirestore)
                         if (firestoreResult.isSuccess) {
-                            // También crear en Room para compatibilidad
-                            val roomUser = User(
-                                nombreCompleto = nombreCompleto,
-                                email = email,
-                                password = password
-                            )
-                            repository.insertUser(roomUser)
-                            
                             // Guardar sesión
-                             sessionManager.saveUserSession(
-                                 firebaseUser.uid,
-                                 nombreCompleto,
-                                 email,
-                                 true
-                             )
-                            _authResult.value = AuthResult.Success("Registro exitoso con Firebase")
+                            sessionManager.saveUserSession(
+                                firebaseUser.uid,
+                                nombreCompleto,
+                                email,
+                                true
+                            )
+                            _authResult.value = AuthResult.Success("Registro exitoso")
                         } else {
                             // Si falla Firestore, eliminar usuario de Firebase Auth
                             firebaseAuthService.signOut()
@@ -87,33 +71,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                         _authResult.value = AuthResult.Error("Error en el registro")
                     }
                 } else {
-                    // Si Firebase falla, registrar solo en Room como fallback
-                    val user = User(
-                        nombreCompleto = nombreCompleto,
-                        email = email,
-                        password = password
-                    )
-                    val userId = repository.insertUser(user)
-                    
-                    // Guardar sesión
-                     sessionManager.saveUserSession(userId.toString(), nombreCompleto, email, false)
-                    _authResult.value = AuthResult.Success("Registro exitoso")
+                    _authResult.value = AuthResult.Error("Error en el registro: ${firebaseResult.exceptionOrNull()?.message}")
                 }
             } catch (e: Exception) {
-                // Fallback a Room en caso de error con Firebase
-                try {
-                    val user = User(
-                        nombreCompleto = nombreCompleto,
-                        email = email,
-                        password = password
-                    )
-                    val userId = repository.insertUser(user)
-                    
-                    sessionManager.saveUserSession(userId.toString(), nombreCompleto, email, false)
-                    _authResult.value = AuthResult.Success("Registro exitoso")
-                } catch (roomException: Exception) {
-                    _authResult.value = AuthResult.Error("Error: ${e.message}")
-                }
+                _authResult.value = AuthResult.Error("Error: ${e.message}")
             } finally {
                 _isLoading.value = false
             }
@@ -128,7 +89,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _isLoading.value = true
         viewModelScope.launch {
             try {
-                // Intentar login con Firebase primero
+                // Login con Firebase Auth
                 val firebaseResult = firebaseAuthService.signInWithEmailPassword(email, password)
                 
                 if (firebaseResult.isSuccess) {
@@ -146,7 +107,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                                     userFirestore.email,
                                     true
                                 )
-                                _authResult.value = AuthResult.Success("Inicio de sesión exitoso con Firebase")
+                                _authResult.value = AuthResult.Success("Inicio de sesión exitoso")
                             } else {
                                 _authResult.value = AuthResult.Error("Error al obtener datos del usuario")
                             }
@@ -157,29 +118,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                         _authResult.value = AuthResult.Error("Error en la autenticación")
                     }
                 } else {
-                    // Si Firebase falla, intentar con Room como fallback
-                    val user = repository.getUserByEmailAndPassword(email, password)
-                    if (user != null) {
-                        // Guardar sesión con datos de Room
-                         sessionManager.saveUserSession(user.id.toString(), user.nombreCompleto, user.email, false)
-                        _authResult.value = AuthResult.Success("Inicio de sesión exitoso")
-                    } else {
-                        _authResult.value = AuthResult.Error("Credenciales incorrectas")
-                    }
+                    _authResult.value = AuthResult.Error("Credenciales incorrectas")
                 }
             } catch (e: Exception) {
-                // Fallback a Room en caso de error con Firebase
-                try {
-                    val user = repository.getUserByEmailAndPassword(email, password)
-                    if (user != null) {
-                        sessionManager.saveUserSession(user.id.toString(), user.nombreCompleto, user.email, false)
-                        _authResult.value = AuthResult.Success("Inicio de sesión exitoso")
-                    } else {
-                        _authResult.value = AuthResult.Error("Credenciales incorrectas")
-                    }
-                } catch (roomException: Exception) {
-                    _authResult.value = AuthResult.Error("Error: ${e.message}")
-                }
+                _authResult.value = AuthResult.Error("Error: ${e.message}")
             } finally {
                 _isLoading.value = false
             }

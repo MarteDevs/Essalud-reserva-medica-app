@@ -39,6 +39,16 @@ class SessionManager(private val context: Context) {
         }
     }
 
+    fun getUserIdAsString(): String {
+        return if (isFirebaseUser()) {
+            // Para usuarios de Firebase, devolvemos el UID directamente
+            firebaseAuth.currentUser?.uid ?: "-1"
+        } else {
+            // Para usuarios de Room, convertimos el ID a String
+            prefs.getString(KEY_USER_ID, null) ?: "-1"
+        }
+    }
+
     fun getFirebaseUserId(): String? {
         return if (isFirebaseUser()) {
             firebaseAuth.currentUser?.uid

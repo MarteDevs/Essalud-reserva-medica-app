@@ -59,6 +59,34 @@ class FirestoreService {
         Result.failure(e)
     }
 
+    suspend fun getUserByEmail(email: String): Result<UserFirestore?> = try {
+        val snapshot = usersCollection
+            .whereEqualTo("email", email)
+            .get()
+            .await()
+        
+        val user = snapshot.documents.firstOrNull()?.let { doc ->
+            UserFirestore(
+                id = doc.id,
+                nombreCompleto = doc.getString("nombreCompleto") ?: "",
+                email = doc.getString("email") ?: "",
+                createdAt = doc.getLong("createdAt") ?: 0L
+            )
+        }
+        Result.success(user)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun updateUser(userId: String, updates: Map<String, Any>): Result<Unit> = try {
+        usersCollection.document(userId)
+            .update(updates)
+            .await()
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
     // Doctores
     fun getDoctorsFlow(): Flow<List<DoctorFirestore>> = callbackFlow {
         val subscription = doctorsCollection
@@ -94,6 +122,18 @@ class FirestoreService {
             doc.toObject(DoctorFirestore::class.java)
         }
         Result.success(doctors)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun getDoctor(doctorId: String): Result<DoctorFirestore?> = try {
+        val document = doctorsCollection.document(doctorId).get().await()
+        if (document.exists()) {
+            val doctor = document.toObject(DoctorFirestore::class.java)
+            Result.success(doctor)
+        } else {
+            Result.success(null)
+        }
     } catch (e: Exception) {
         Result.failure(e)
     }
@@ -137,8 +177,41 @@ class FirestoreService {
         Result.failure(e)
     }
 
+    suspend fun updateCitaEstado(citaId: String, newStatus: String): Result<Unit> = try {
+        citasCollection.document(citaId)
+            .update("estado", newStatus)
+            .await()
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun updateCita(citaId: String, updates: Map<String, Any>): Result<Unit> = try {
+        citasCollection.document(citaId)
+            .update(updates)
+            .await()
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
     suspend fun getAllCitas(): Result<List<CitaFirestore>> = try {
         val snapshot = citasCollection.get().await()
+        val citas = snapshot.documents.mapNotNull { doc ->
+            doc.toObject(CitaFirestore::class.java)
+        }
+        Result.success(citas)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun getCitasByDoctorAndDate(doctorId: String, fechaTimestamp: Long): Result<List<CitaFirestore>> = try {
+        val snapshot = citasCollection
+            .whereEqualTo("doctorId", doctorId)
+            .whereEqualTo("fecha", fechaTimestamp)
+            .get()
+            .await()
+        
         val citas = snapshot.documents.mapNotNull { doc ->
             doc.toObject(CitaFirestore::class.java)
         }
@@ -191,6 +264,18 @@ class FirestoreService {
             doc.toObject(CalificacionFirestore::class.java)
         }
         Result.success(calificaciones)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun getCalificacionByCitaId(citaId: String): Result<CalificacionFirestore?> = try {
+        val snapshot = calificacionesCollection
+            .whereEqualTo("citaId", citaId)
+            .get()
+            .await()
+        
+        val calificacion = snapshot.documents.firstOrNull()?.toObject(CalificacionFirestore::class.java)
+        Result.success(calificacion)
     } catch (e: Exception) {
         Result.failure(e)
     }

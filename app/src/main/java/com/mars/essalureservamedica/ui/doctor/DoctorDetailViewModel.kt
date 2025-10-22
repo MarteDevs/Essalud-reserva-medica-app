@@ -5,8 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.mars.essalureservamedica.data.repository.AppRepository
-import com.mars.essalureservamedica.data.entity.Doctor
+import com.mars.essalureservamedica.data.firebase.FirestoreService
+import com.mars.essalureservamedica.data.firebase.models.DoctorFirestore
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,10 +19,10 @@ data class ScheduleSlot(
 
 class DoctorDetailViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = AppRepository.getInstance(application)
+    private val firestoreService = FirestoreService()
 
-    private val _doctor = MutableLiveData<Doctor?>()
-    val doctor: LiveData<Doctor?> = _doctor
+    private val _doctor = MutableLiveData<DoctorFirestore?>()
+    val doctor: LiveData<DoctorFirestore?> = _doctor
 
     private val _availableSchedules = MutableLiveData<List<ScheduleSlot>>()
     val availableSchedules: LiveData<List<ScheduleSlot>> = _availableSchedules
@@ -30,18 +30,22 @@ class DoctorDetailViewModel(application: Application) : AndroidViewModel(applica
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    fun loadDoctorDetails(doctorId: Int) {
+    fun loadDoctorDetails(doctorId: String) {
         viewModelScope.launch {
             try {
-                val doctorDetails = repository.getDoctorById(doctorId)
-                _doctor.value = doctorDetails
+                val result = firestoreService.getDoctor(doctorId)
+                if (result.isSuccess) {
+                    _doctor.value = result.getOrNull()
+                } else {
+                    _doctor.value = null
+                }
             } catch (e: Exception) {
                 _doctor.value = null
             }
         }
     }
 
-    fun loadAvailableSchedules(doctorId: Int) {
+    fun loadAvailableSchedules(doctorId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {

@@ -26,8 +26,8 @@ class DoctorDetailActivity : AppCompatActivity() {
         observeViewModel()
         setupClickListeners()
 
-        val doctorId = intent.getIntExtra("doctor_id", -1)
-        if (doctorId != -1) {
+        val doctorId = intent.getStringExtra("doctor_id")
+        if (doctorId != null && doctorId.isNotEmpty()) {
             viewModel.loadDoctorDetails(doctorId)
             viewModel.loadAvailableSchedules(doctorId)
         }
@@ -76,8 +76,8 @@ class DoctorDetailActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.btnScheduleAppointment.setOnClickListener {
-            val doctorId = intent.getIntExtra("doctor_id", -1)
-            if (doctorId != -1) {
+            val doctorId = intent.getStringExtra("doctor_id")
+            if (doctorId != null && doctorId.isNotEmpty()) {
                 val intent = Intent(this, ScheduleActivity::class.java)
                 intent.putExtra("doctor_id", doctorId)
                 startActivity(intent)

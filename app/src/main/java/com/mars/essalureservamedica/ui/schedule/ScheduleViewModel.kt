@@ -5,22 +5,22 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.mars.essalureservamedica.data.entity.Cita
-import com.mars.essalureservamedica.data.entity.Doctor
-import com.mars.essalureservamedica.data.repository.AppRepository
+import com.mars.essalureservamedica.data.firebase.FirestoreService
+import com.mars.essalureservamedica.data.firebase.models.CitaFirestore
+import com.mars.essalureservamedica.data.firebase.models.DoctorFirestore
+import com.mars.essalureservamedica.data.firebase.models.NotificacionFirestore
 import com.mars.essalureservamedica.utils.SessionManager
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import com.mars.essalureservamedica.data.entity.EstadoCita
 import java.util.*
 
 class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = AppRepository.getInstance(application)
+    private val firestoreService = FirestoreService()
     private val sessionManager = SessionManager(application)
 
-    private val _doctor = MutableLiveData<Doctor?>()
-    val doctor: LiveData<Doctor?> = _doctor
+    private val _doctor = MutableLiveData<DoctorFirestore?>()
+    val doctor: LiveData<DoctorFirestore?> = _doctor
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -34,11 +34,15 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     private val _horasOcupadas = MutableLiveData<List<String>>()
     val horasOcupadas: LiveData<List<String>> = _horasOcupadas
 
-    fun loadDoctorDetails(doctorId: Int) {
+    fun loadDoctorDetails(doctorId: String) {
         viewModelScope.launch {
             try {
-                val doctorData = repository.getDoctorById(doctorId)
-                _doctor.value = doctorData
+                val result = firestoreService.getDoctor(doctorId)
+                if (result.isSuccess) {
+                    _doctor.value = result.getOrNull()
+                } else {
+                    _errorMessage.value = "Error al cargar información del doctor"
+                }
             } catch (e: Exception) {
                 _errorMessage.value = "Error al cargar información del doctor: ${e.message}"
             }
@@ -46,7 +50,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     }
 
     // Esta función se ejecuta en segundo plano SIN bloquear la UI
-    fun cargarHorasOcupadas(doctorId: Int, fecha: String) {
+    fun cargarHorasOcupadas(doctorId: String, fecha: String) {
         viewModelScope.launch {
             try {
                 // Convertir fecha string a timestamp
@@ -54,12 +58,18 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 val fechaDate = dateFormat.parse(fecha)
                 val fechaTimestamp = fechaDate?.time ?: return@launch
 
-                // La operación de base de datos se hace aquí, en una corrutina
-                val citas = repository.getCitasPorDoctorYFecha(doctorId, fechaTimestamp)
-                val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-                val horasOcupadasList = citas.map { timeFormat.format(it.fechaHora) }
-                
-                _horasOcupadas.postValue(horasOcupadasList) // Notifica a la UI cuando termina
+                // Obtener citas desde Firestore
+                val result = firestoreService.getCitasByDoctorAndDate(doctorId, fechaTimestamp)
+                if (result.isSuccess) {
+                    val citas = result.getOrNull() ?: emptyList()
+                    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                    val horasOcupadasList = citas.map { it.hora }
+                    
+                    _horasOcupadas.postValue(horasOcupadasList) // Notifica a la UI cuando termina
+                } else {
+                    _errorMessage.value = "Error al cargar horas ocupadas"
+                    _horasOcupadas.postValue(emptyList())
+                }
             } catch (e: Exception) {
                 _errorMessage.value = "Error al cargar horas ocupadas: ${e.message}"
                 _horasOcupadas.postValue(emptyList())
@@ -67,12 +77,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun scheduleAppointment(doctorId: Int, dateTime: Date, notes: String) {
+    fun scheduleAppointment(doctorId: String, dateTime: Date, notes: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val userId = sessionManager.getUserId()
-                if (userId == -1) {
+                val userId = sessionManager.getUserIdAsString()
+                if (userId == "-1") {
                     _appointmentResult.value = Result.failure(Exception("Usuario no autenticado"))
                     return@launch
                 }
@@ -87,23 +97,35 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                     return@launch
                 }
 
-                val cita = Cita(
-                    id = 0, // Se auto-genera
+                val cita = CitaFirestore(
+                    id = "", // Se auto-genera en Firestore
                     usuarioId = userId,
                     doctorId = doctorId,
-                    fechaHora = dateTime,
+                    fecha = dateTime.time,
+                    hora = horaSeleccionada,
                     estado = "Confirmada",
-                    notas = notes.ifEmpty { null }
+                    motivo = notes
                 )
 
-                val citaId = repository.insertCita(cita)
+                val result = firestoreService.createCita(cita)
                 
-                // Crear notificación automática para la nueva cita
-                val titulo = "Nueva cita agendada"
-                val mensaje = "Su cita ha sido agendada exitosamente"
-                repository.crearNotificacionCita(userId, citaId.toInt(), EstadoCita.CONFIRMADA.name, titulo, mensaje)
-                
-                _appointmentResult.value = Result.success(Unit)
+                if (result.isSuccess) {
+                    val citaId = result.getOrNull()
+                    if (citaId != null) {
+                        // Crear notificación automática para la nueva cita
+                        val notificacion = NotificacionFirestore(
+                            usuarioId = userId,
+                            titulo = "Nueva cita agendada",
+                            mensaje = "Su cita ha sido agendada exitosamente",
+                            tipo = "CITA_CONFIRMADA",
+                            citaId = citaId
+                        )
+                        firestoreService.createNotificacion(notificacion)
+                    }
+                    _appointmentResult.value = Result.success(Unit)
+                } else {
+                    _appointmentResult.value = Result.failure(Exception("Error al crear la cita"))
+                }
             } catch (e: Exception) {
                 _appointmentResult.value = Result.failure(e)
             } finally {

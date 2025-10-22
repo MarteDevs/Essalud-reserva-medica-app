@@ -8,12 +8,11 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.mars.essalureservamedica.R
-import com.mars.essalureservamedica.data.dao.CitaWithDoctorInfo
-import com.mars.essalureservamedica.data.entity.Calificacion
+import com.mars.essalureservamedica.data.firebase.models.CitaWithDoctorFirestore
+import com.mars.essalureservamedica.data.firebase.models.CalificacionFirestore
 import com.mars.essalureservamedica.databinding.DialogRatingBinding
 import com.mars.essalureservamedica.ui.main.AppointmentsViewModel
 import com.mars.essalureservamedica.ui.ViewModelFactory
-import com.mars.essalureservamedica.data.repository.AppRepository
 import com.mars.essalureservamedica.utils.SessionManager
 import java.util.*
 
@@ -23,14 +22,14 @@ class RatingDialogFragment : DialogFragment() {
     private val binding get() = _binding!!
     
     private lateinit var appointmentsViewModel: AppointmentsViewModel
-    private lateinit var citaInfo: CitaWithDoctorInfo
+    private lateinit var citaInfo: CitaWithDoctorFirestore
     private var userId: Int = 0
     
     companion object {
         private const val ARG_CITA_INFO = "cita_info"
         private const val ARG_USER_ID = "user_id"
         
-        fun newInstance(citaInfo: CitaWithDoctorInfo, userId: Int): RatingDialogFragment {
+        fun newInstance(citaInfo: CitaWithDoctorFirestore, userId: Int): RatingDialogFragment {
             val fragment = RatingDialogFragment()
             val args = Bundle()
             args.putSerializable(ARG_CITA_INFO, citaInfo)
@@ -43,7 +42,7 @@ class RatingDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            citaInfo = it.getSerializable(ARG_CITA_INFO) as CitaWithDoctorInfo
+            citaInfo = it.getSerializable(ARG_CITA_INFO) as CitaWithDoctorFirestore
             userId = it.getInt(ARG_USER_ID)
         }
         appointmentsViewModel = ViewModelProvider(requireActivity())[AppointmentsViewModel::class.java]
@@ -116,13 +115,14 @@ class RatingDialogFragment : DialogFragment() {
             return
         }
         
-        val calificacion = Calificacion(
-            usuarioId = userId,
+        val calificacion = CalificacionFirestore(
+            id = "", // Se auto-genera en Firestore
+            usuarioId = userId.toString(),
             doctorId = citaInfo.doctorId,
             citaId = citaInfo.id,
-            puntuacion = rating,
-            comentario = if (comment.isNotEmpty()) comment else null,
-            fechaCalificacion = Date()
+            puntuacion = rating.toInt(),
+            comentario = if (comment.isNotEmpty()) comment else "",
+            fecha = Date().time
         )
         
         appointmentsViewModel.submitRating(calificacion)

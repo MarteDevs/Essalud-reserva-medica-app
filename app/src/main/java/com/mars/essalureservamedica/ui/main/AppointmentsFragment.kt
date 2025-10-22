@@ -9,7 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mars.essalureservamedica.data.dao.CitaWithDoctorInfo
+import com.mars.essalureservamedica.data.firebase.models.CitaWithDoctorFirestore
 import com.mars.essalureservamedica.data.entity.EstadoCita
 import com.mars.essalureservamedica.databinding.FragmentAppointmentsBinding
 import com.mars.essalureservamedica.ui.main.adapter.AppointmentsAdapter
@@ -90,14 +90,14 @@ class AppointmentsFragment : Fragment() {
         }
     }
 
-    private fun showAppointmentDetails(cita: CitaWithDoctorInfo) {
+    private fun showAppointmentDetails(cita: CitaWithDoctorFirestore) {
         val estado = EstadoCita.fromString(cita.estado)
         val message = """
             Doctor: Dr. ${cita.doctorNombre}
             Especialidad: ${cita.doctorEspecialidad}
             Fecha: ${java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(cita.fechaHora)}
             Estado: ${estado.displayName}
-            ${if (cita.notas != null) "Notas: ${cita.notas}" else ""}
+            ${if (cita.motivo.isNotEmpty()) "Motivo: ${cita.motivo}" else ""}
         """.trimIndent()
 
         AlertDialog.Builder(requireContext())
@@ -107,7 +107,7 @@ class AppointmentsFragment : Fragment() {
             .show()
     }
 
-    private fun showCancelConfirmation(cita: CitaWithDoctorInfo) {
+    private fun showCancelConfirmation(cita: CitaWithDoctorFirestore) {
         AlertDialog.Builder(requireContext())
             .setTitle("Cancelar Cita")
             .setMessage("¿Estás seguro de que deseas cancelar la cita con Dr. ${cita.doctorNombre}?")
@@ -118,12 +118,12 @@ class AppointmentsFragment : Fragment() {
             .show()
     }
 
-    private fun showRescheduleDialog(cita: CitaWithDoctorInfo) {
+    private fun showRescheduleDialog(cita: CitaWithDoctorFirestore) {
         val dialog = RescheduleDialogFragment.newInstance(cita)
         dialog.show(childFragmentManager, "RescheduleDialog")
     }
 
-    private fun showRatingDialog(cita: CitaWithDoctorInfo) {
+    private fun showRatingDialog(cita: CitaWithDoctorFirestore) {
         val sessionManager = SessionManager(requireContext())
         val userId = sessionManager.getUserId()
         

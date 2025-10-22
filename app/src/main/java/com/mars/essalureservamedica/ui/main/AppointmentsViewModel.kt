@@ -5,21 +5,23 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.mars.essalureservamedica.data.repository.AppRepository
-import com.mars.essalureservamedica.data.dao.CitaWithDoctorInfo
-import com.mars.essalureservamedica.data.entity.Calificacion
-import com.mars.essalureservamedica.data.entity.EstadoCita
+import com.mars.essalureservamedica.data.firebase.FirestoreService
+import com.mars.essalureservamedica.data.firebase.models.CitaFirestore
+import com.mars.essalureservamedica.data.firebase.models.CitaWithDoctorFirestore
+import com.mars.essalureservamedica.data.firebase.models.CalificacionFirestore
 import com.mars.essalureservamedica.utils.SessionManager
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import java.util.*
 
 class AppointmentsViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = AppRepository.getInstance(application)
+    private val firestoreService = FirestoreService()
     private val sessionManager = SessionManager(application)
 
-    private val _appointments = MutableLiveData<List<CitaWithDoctorInfo>>()
-    val appointments: LiveData<List<CitaWithDoctorInfo>> = _appointments
+    private val _appointments = MutableLiveData<List<CitaWithDoctorFirestore>>()
+    val appointments: LiveData<List<CitaWithDoctorFirestore>> = _appointments
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -27,47 +29,63 @@ class AppointmentsViewModel(application: Application) : AndroidViewModel(applica
     private val _operationResult = MutableLiveData<Result<String>?>()
     val operationResult: LiveData<Result<String>?> = _operationResult
 
-    private val _historialCitas = MutableLiveData<List<CitaWithDoctorInfo>>()
-    val historialCitas: LiveData<List<CitaWithDoctorInfo>> = _historialCitas
+    private val _historialCitas = MutableLiveData<List<CitaWithDoctorFirestore>>()
+    val historialCitas: LiveData<List<CitaWithDoctorFirestore>> = _historialCitas
 
     fun loadAppointments() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val userId = sessionManager.getUserId()
-                if (userId != -1) {
-                    // Observar los datos directamente
-                    repository.getCitasWithDoctorByUserId(userId).observeForever { appointmentsList ->
-                        _appointments.value = appointmentsList
-                        _isLoading.value = false
-                    }
+                val userId = sessionManager.getUserIdAsString()
+                if (userId != "-1") {
+                    // Usar Flow para obtener citas en tiempo real desde Firestore
+                    firestoreService.getUserCitasFlow(userId)
+                        .catch { e ->
+                            _operationResult.value = Result.failure(Exception("Error al cargar citas: ${e.message}"))
+                            _appointments.value = emptyList()
+                            _isLoading.value = false
+                        }
+                        .collect { citas ->
+                            // Convertir CitaFirestore a CitaWithDoctorFirestore
+                            val citasWithDoctor = citas.mapNotNull { cita ->
+                                try {
+                                    val doctorResult = firestoreService.getDoctor(cita.doctorId)
+                                    if (doctorResult.isSuccess) {
+                                        val doctor = doctorResult.getOrNull()
+                                        if (doctor != null) {
+                                            CitaWithDoctorFirestore.from(cita, doctor)
+                                        } else null
+                                    } else null
+                                } catch (e: Exception) {
+                                    null
+                                }
+                            }
+                            _appointments.value = citasWithDoctor
+                            _isLoading.value = false
+                        }
                 } else {
                     _appointments.value = emptyList()
                     _isLoading.value = false
                 }
             } catch (e: Exception) {
+                _operationResult.value = Result.failure(Exception("Error al cargar citas: ${e.message}"))
                 _appointments.value = emptyList()
                 _isLoading.value = false
             }
         }
     }
 
-    fun cancelarCita(citaId: Int) {
+    fun cancelarCita(citaId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.updateCitaEstado(citaId, EstadoCita.CANCELADA.name)
-                
-                // Crear notificación automática para la cancelación
-                val userId = sessionManager.getUserId()
-                if (userId != -1) {
-                    val titulo = "Cita cancelada"
-                    val mensaje = "Su cita ha sido cancelada exitosamente"
-                    repository.crearNotificacionCita(userId, citaId, EstadoCita.CANCELADA.name, titulo, mensaje)
+                val result = firestoreService.updateCitaEstado(citaId, "CANCELADA")
+                if (result.isSuccess) {
+                    _operationResult.value = Result.success("Cita cancelada exitosamente")
+                    // Las citas se actualizarán automáticamente a través del Flow
+                } else {
+                    _operationResult.value = Result.failure(Exception("Error al cancelar la cita"))
                 }
-                
-                _operationResult.value = Result.success("Cita cancelada exitosamente")
-                loadAppointments() // Recargar las citas
             } catch (e: Exception) {
                 _operationResult.value = Result.failure(e)
             } finally {
@@ -76,22 +94,22 @@ class AppointmentsViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun reprogramarCita(citaId: Int, nuevaFechaHora: Date) {
+    fun reprogramarCita(citaId: String, nuevaFecha: Long, nuevaHora: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.reprogramarCita(citaId, nuevaFechaHora)
-                
-                // Crear notificación automática para la reprogramación
-                val userId = sessionManager.getUserId()
-                if (userId != -1) {
-                    val titulo = "Cita reprogramada"
-                    val mensaje = "Su cita ha sido reprogramada exitosamente"
-                    repository.crearNotificacionCita(userId, citaId, EstadoCita.REPROGRAMADA.name, titulo, mensaje)
+                val updates = mapOf(
+                    "fecha" to nuevaFecha,
+                    "hora" to nuevaHora,
+                    "estado" to "REPROGRAMADA"
+                )
+                val result = firestoreService.updateCita(citaId, updates)
+                if (result.isSuccess) {
+                    _operationResult.value = Result.success("Cita reprogramada exitosamente")
+                    // Las citas se actualizarán automáticamente a través del Flow
+                } else {
+                    _operationResult.value = Result.failure(Exception("Error al reprogramar la cita"))
                 }
-                
-                _operationResult.value = Result.success("Cita reprogramada exitosamente")
-                loadAppointments() // Recargar las citas
             } catch (e: Exception) {
                 _operationResult.value = Result.failure(e)
             } finally {
@@ -100,22 +118,17 @@ class AppointmentsViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun updateCitaEstado(citaId: Int, estado: EstadoCita) {
+    fun updateCitaEstado(citaId: String, estado: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.updateCitaEstado(citaId, estado.name)
-                
-                // Crear notificación automática para el cambio de estado
-                val userId = sessionManager.getUserId()
-                if (userId != -1) {
-                    val titulo = "Estado de cita actualizado"
-                    val mensaje = "Su cita ha sido ${estado.displayName.lowercase()}"
-                    repository.crearNotificacionCita(userId, citaId, estado.name, titulo, mensaje)
+                val result = firestoreService.updateCitaEstado(citaId, estado)
+                if (result.isSuccess) {
+                    _operationResult.value = Result.success("Estado actualizado a $estado")
+                    // Las citas se actualizarán automáticamente a través del Flow
+                } else {
+                    _operationResult.value = Result.failure(Exception("Error al actualizar el estado"))
                 }
-                
-                _operationResult.value = Result.success("Estado actualizado a ${estado.displayName}")
-                loadAppointments() // Recargar las citas
             } catch (e: Exception) {
                 _operationResult.value = Result.failure(e)
             } finally {
@@ -128,31 +141,45 @@ class AppointmentsViewModel(application: Application) : AndroidViewModel(applica
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val userId = sessionManager.getUserId()
-                if (userId != -1) {
-                    val fechaActual = Date()
-                    repository.getHistorialCitas(userId, fechaActual).observeForever { historial ->
-                        _historialCitas.value = historial.map { cita ->
-                            // Convertir Cita a CitaWithDoctorInfo
-                            // Necesitaremos obtener la información del doctor
-                            CitaWithDoctorInfo(
-                                id = cita.id,
-                                usuarioId = cita.usuarioId,
-                                doctorId = cita.doctorId,
-                                fechaHora = cita.fechaHora,
-                                estado = cita.estado,
-                                notas = cita.notas,
-                                doctorNombre = "", // Se llenará con una consulta adicional
-                                doctorEspecialidad = "" // Se llenará con una consulta adicional
-                            )
+                val userId = sessionManager.getUserIdAsString()
+                if (userId != "-1") {
+                    // Usar Flow para obtener historial de citas desde Firestore
+                    firestoreService.getUserCitasFlow(userId)
+                        .catch { e ->
+                            _operationResult.value = Result.failure(Exception("Error al cargar historial: ${e.message}"))
+                            _historialCitas.value = emptyList()
+                            _isLoading.value = false
                         }
-                        _isLoading.value = false
-                    }
+                        .collect { citas ->
+                            // Filtrar citas pasadas o completadas para el historial
+                            val fechaActual = System.currentTimeMillis()
+                            val historial = citas.filter { cita ->
+                                cita.fecha < fechaActual || cita.estado in listOf("COMPLETADA", "CANCELADA")
+                            }
+                            
+                            // Convertir CitaFirestore a CitaWithDoctorFirestore
+                            val historialWithDoctor = historial.mapNotNull { cita ->
+                                try {
+                                    val doctorResult = firestoreService.getDoctor(cita.doctorId)
+                                    if (doctorResult.isSuccess) {
+                                        val doctor = doctorResult.getOrNull()
+                                        if (doctor != null) {
+                                            CitaWithDoctorFirestore.from(cita, doctor)
+                                        } else null
+                                    } else null
+                                } catch (e: Exception) {
+                                    null
+                                }
+                            }
+                            _historialCitas.value = historialWithDoctor
+                            _isLoading.value = false
+                        }
                 } else {
                     _historialCitas.value = emptyList()
                     _isLoading.value = false
                 }
             } catch (e: Exception) {
+                _operationResult.value = Result.failure(Exception("Error al cargar historial: ${e.message}"))
                 _historialCitas.value = emptyList()
                 _isLoading.value = false
             }
@@ -163,13 +190,16 @@ class AppointmentsViewModel(application: Application) : AndroidViewModel(applica
         _operationResult.value = null
     }
 
-    fun submitRating(calificacion: Calificacion) {
+    fun submitRating(calificacion: CalificacionFirestore) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.insertCalificacion(calificacion)
-                _operationResult.value = Result.success("Calificación enviada exitosamente")
-                loadAppointments() // Recargar las citas
+                val result = firestoreService.addCalificacion(calificacion)
+                if (result.isSuccess) {
+                    _operationResult.value = Result.success("Calificación enviada exitosamente")
+                } else {
+                    _operationResult.value = Result.failure(Exception("Error al enviar la calificación"))
+                }
             } catch (e: Exception) {
                 _operationResult.value = Result.failure(e)
             } finally {
@@ -178,10 +208,10 @@ class AppointmentsViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    suspend fun canRateAppointment(citaId: Int): Boolean {
+    suspend fun canRateAppointment(citaId: String): Boolean {
         return try {
-            val existingRating = repository.getCalificacionByCitaId(citaId)
-            existingRating == null // Solo se puede calificar si no existe una calificación previa
+            val result = firestoreService.getCalificacionByCitaId(citaId)
+            result.isSuccess && result.getOrNull() == null // Solo se puede calificar si no existe una calificación previa
         } catch (e: Exception) {
             false
         }

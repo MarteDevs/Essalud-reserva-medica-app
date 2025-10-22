@@ -5,17 +5,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.mars.essalureservamedica.data.database.AppDatabase
-import com.mars.essalureservamedica.data.repository.AppRepository
 import com.mars.essalureservamedica.data.firebase.FirestoreService
 import com.mars.essalureservamedica.utils.SessionManager
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: AppRepository
     private val sessionManager: SessionManager
     private val firestoreService = FirestoreService()
 
@@ -35,25 +31,20 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val recentActivity: LiveData<String> = _recentActivity
 
     init {
-        repository = AppRepository.getInstance(application)
         sessionManager = SessionManager(application)
     }
 
     fun loadStats() {
         viewModelScope.launch {
             _isLoading.value = true
-            _syncStatus.value = "Cargando estadísticas..."
+            _syncStatus.value = "Cargando estadísticas desde Firestore..."
             
             try {
-                // 1. Cargar estadísticas desde Firestore (fuente principal)
+                // Cargar estadísticas directamente desde Firestore
                 loadStatsFromFirestore()
-                
-                // 2. Sincronizar con datos locales como fallback
-                syncWithLocalStats()
-                
             } catch (e: Exception) {
-                // En caso de error, usar datos locales
-                loadStatsFromRoom()
+                _syncStatus.value = "Error al cargar estadísticas: ${e.message}"
+                _isLoading.value = false
             }
         }
     }
@@ -68,15 +59,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             // Cargar citas del usuario actual desde Firestore
-            val userId = sessionManager.getUserId()
-            if (userId != -1) {
-                val userIdString = userId.toString()
-                
+            val userId = sessionManager.getUserIdAsString()
+            if (userId != "-1") {
                 // Usar Flow para obtener citas en tiempo real
-                firestoreService.getUserCitasFlow(userIdString)
+                firestoreService.getUserCitasFlow(userId)
                     .catch { e ->
-                        _syncStatus.value = "Error al cargar citas, usando datos locales"
-                        loadAppointmentsFromRoom()
+                        _syncStatus.value = "Error al cargar citas: ${e.message}"
+                        _totalAppointments.value = 0
+                        _recentActivity.value = "Error al cargar citas"
+                        _isLoading.value = false
                     }
                     .collect { citas ->
                         _totalAppointments.value = citas.size
@@ -85,81 +76,22 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                         } else {
                             "No hay citas registradas"
                         }
-                        _syncStatus.value = "Datos actualizados desde Firestore"
+                        _syncStatus.value = "Estadísticas cargadas desde Firestore (${citas.size} citas, ${_totalDoctors.value ?: 0} doctores)"
+                        _isLoading.value = false
                     }
             } else {
                 _totalAppointments.value = 0
                 _recentActivity.value = "Usuario no autenticado"
+                _syncStatus.value = "Usuario no autenticado"
+                _isLoading.value = false
             }
             
-            _isLoading.value = false
-            
         } catch (e: Exception) {
-            _syncStatus.value = "Error de conexión, usando datos locales"
-            loadStatsFromRoom()
-        }
-    }
-
-    private suspend fun loadStatsFromRoom() {
-        try {
-            // Cargar total de doctores desde Room
-            val doctorCount = repository.getDoctorCount()
-            _totalDoctors.value = doctorCount
-
-            // Cargar total de citas del usuario actual desde Room
-            val userId = sessionManager.getUserId()
-            if (userId != -1) {
-                val userAppointments = repository.getCitasByUserId(userId).value ?: emptyList()
-                _totalAppointments.value = userAppointments.size
-                
-                _recentActivity.value = if (userAppointments.isNotEmpty()) {
-                    "Última cita: ${userAppointments.firstOrNull()?.fechaHora?.let { formatDate(it.time) } ?: "N/A"}"
-                } else {
-                    "No hay citas registradas"
-                }
-            } else {
-                _totalAppointments.value = 0
-                _recentActivity.value = "Usuario no autenticado"
-            }
-            
-            _syncStatus.value = "Usando datos locales"
-            
-        } catch (e: Exception) {
+            _syncStatus.value = "Error de conexión: ${e.message}"
             _totalDoctors.value = 0
             _totalAppointments.value = 0
             _recentActivity.value = "Error al cargar datos"
-            _syncStatus.value = "Error al cargar estadísticas"
-        } finally {
             _isLoading.value = false
-        }
-    }
-
-    private suspend fun loadAppointmentsFromRoom() {
-        val userId = sessionManager.getUserId()
-        if (userId != -1) {
-            val userAppointments = repository.getCitasByUserId(userId).value ?: emptyList()
-            _totalAppointments.value = userAppointments.size
-        }
-    }
-
-    private suspend fun syncWithLocalStats() {
-        try {
-            // Sincronizar doctores con Room para cache
-            val doctorsResult = firestoreService.getAllDoctors()
-            if (doctorsResult.isSuccess) {
-                val firestoreDoctors = doctorsResult.getOrNull() ?: emptyList()
-                // Aquí podrías sincronizar los doctores con Room si es necesario
-            }
-            
-            // Sincronizar citas con Room para cache
-            val userId = sessionManager.getUserId()
-            if (userId != -1) {
-                val citasResult = firestoreService.getUserCitasFlow(userId.toString())
-                // La sincronización de citas se maneja en el flow
-            }
-            
-        } catch (e: Exception) {
-            // Error en sincronización, continuar con datos actuales
         }
     }
 
@@ -174,7 +106,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // Función para forzar actualización manual
+    // Función para recargar estadísticas desde Firestore
     fun refreshStats() {
         loadStats()
     }

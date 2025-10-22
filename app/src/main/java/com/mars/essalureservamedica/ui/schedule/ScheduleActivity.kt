@@ -30,8 +30,8 @@ class ScheduleActivity : AppCompatActivity() {
         setupClickListeners()
         observeViewModel()
 
-        val doctorId = intent.getIntExtra("doctor_id", -1)
-        if (doctorId != -1) {
+        val doctorId = intent.getStringExtra("doctor_id")
+        if (doctorId != null && doctorId.isNotEmpty()) {
             viewModel.loadDoctorDetails(doctorId)
         }
 
@@ -124,8 +124,8 @@ class ScheduleActivity : AppCompatActivity() {
                 binding.etDate.setText(fechaSeleccionada)
                 
                 // Cargar horas ocupadas cuando se selecciona una fecha
-                val doctorId = intent.getIntExtra("doctor_id", -1)
-                if (doctorId != -1) {
+                val doctorId = intent.getStringExtra("doctor_id")
+                if (doctorId != null && doctorId.isNotEmpty()) {
                     viewModel.cargarHorasOcupadas(doctorId, fechaSeleccionada)
                 }
             },
@@ -158,12 +158,12 @@ class ScheduleActivity : AppCompatActivity() {
     }
 
     private fun scheduleAppointment() {
-        val doctorId = intent.getIntExtra("doctor_id", -1)
+        val doctorId = intent.getStringExtra("doctor_id")
         val date = binding.etDate.text.toString()
         val time = binding.etTime.text.toString()
         val notes = binding.etNotes.text.toString()
 
-        if (doctorId == -1) {
+        if (doctorId.isNullOrEmpty()) {
             Toast.makeText(this, "Error: Doctor no encontrado", Toast.LENGTH_SHORT).show()
             return
         }

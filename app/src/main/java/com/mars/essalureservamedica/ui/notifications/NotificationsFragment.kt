@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mars.essalureservamedica.R
-import com.mars.essalureservamedica.data.repository.AppRepository
 import com.mars.essalureservamedica.databinding.FragmentNotificationsBinding
 import com.mars.essalureservamedica.ui.ViewModelFactory
 import com.mars.essalureservamedica.utils.SessionManager
@@ -41,9 +40,8 @@ class NotificationsFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        val repository = AppRepository.getInstance(requireContext())
         val sessionManager = SessionManager(requireContext())
-        val factory = ViewModelFactory(repository, sessionManager, requireActivity().application)
+        val factory = ViewModelFactory(sessionManager, requireActivity().application)
         viewModel = ViewModelProvider(this, factory)[NotificationsViewModel::class.java]
     }
 

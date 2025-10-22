@@ -9,18 +9,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mars.essalureservamedica.R // <-- Asegúrate de que esta importación exista
-import com.mars.essalureservamedica.data.dao.CitaWithDoctorInfo
+import com.mars.essalureservamedica.data.firebase.models.CitaWithDoctorFirestore
 import com.mars.essalureservamedica.data.entity.EstadoCita
 import com.mars.essalureservamedica.databinding.ItemAppointmentBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AppointmentsAdapter(
-    private val onAppointmentClick: (CitaWithDoctorInfo) -> Unit,
-    private val onCancelClick: (CitaWithDoctorInfo) -> Unit,
-    private val onRescheduleClick: (CitaWithDoctorInfo) -> Unit,
-    private val onRateClick: (CitaWithDoctorInfo) -> Unit
-) : ListAdapter<CitaWithDoctorInfo, AppointmentsAdapter.AppointmentViewHolder>(AppointmentDiffCallback()) {
+    private val onAppointmentClick: (CitaWithDoctorFirestore) -> Unit,
+    private val onCancelClick: (CitaWithDoctorFirestore) -> Unit,
+    private val onRescheduleClick: (CitaWithDoctorFirestore) -> Unit,
+    private val onRateClick: (CitaWithDoctorFirestore) -> Unit
+) : ListAdapter<CitaWithDoctorFirestore, AppointmentsAdapter.AppointmentViewHolder>(AppointmentDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppointmentViewHolder {
         val binding = ItemAppointmentBinding.inflate(
@@ -41,7 +41,7 @@ class AppointmentsAdapter(
 
         private val dateFormat = SimpleDateFormat("dd MMM yyyy - hh:mm a", Locale("es", "ES"))
 
-        fun bind(citaWithDoctorInfo: CitaWithDoctorInfo) {
+        fun bind(citaWithDoctorInfo: CitaWithDoctorFirestore) {
             binding.apply {
                 tvDoctorName.text = "Dr. ${citaWithDoctorInfo.doctorNombre}"
                 tvSpecialty.text = citaWithDoctorInfo.doctorEspecialidad
@@ -99,12 +99,12 @@ class AppointmentsAdapter(
         }
     }
 
-    private class AppointmentDiffCallback : DiffUtil.ItemCallback<CitaWithDoctorInfo>() {
-        override fun areItemsTheSame(oldItem: CitaWithDoctorInfo, newItem: CitaWithDoctorInfo): Boolean {
+    private class AppointmentDiffCallback : DiffUtil.ItemCallback<CitaWithDoctorFirestore>() {
+        override fun areItemsTheSame(oldItem: CitaWithDoctorFirestore, newItem: CitaWithDoctorFirestore): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: CitaWithDoctorInfo, newItem: CitaWithDoctorInfo): Boolean {
+        override fun areContentsTheSame(oldItem: CitaWithDoctorFirestore, newItem: CitaWithDoctorFirestore): Boolean {
             return oldItem == newItem
         }
     }
