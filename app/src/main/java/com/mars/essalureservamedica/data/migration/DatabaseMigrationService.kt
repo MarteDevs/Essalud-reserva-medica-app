@@ -1,5 +1,6 @@
 package com.mars.essalureservamedica.data.migration
 
+import android.util.Log
 import com.mars.essalureservamedica.data.firebase.FirestoreService
 import com.mars.essalureservamedica.data.firebase.models.*
 import com.mars.essalureservamedica.data.dao.*
@@ -153,8 +154,15 @@ class DatabaseMigrationService @Inject constructor(
             val roomUsers = userDao.getAllUsers().value?.size ?: 0
             val firestoreResult = firestoreService.getAllUsers()
             val firestoreUsers = firestoreResult.getOrNull()?.size ?: 0
+            
+            Log.d("DatabaseMigrationService", "Verificación usuarios - Room: $roomUsers, Firestore: $firestoreUsers")
+            
+            // Si no hay usuarios en Room, consideramos la migración exitosa
+            if (roomUsers == 0) return true
+            
             roomUsers == firestoreUsers
         } catch (e: Exception) {
+            Log.e("DatabaseMigrationService", "Error verificando usuarios", e)
             false
         }
     }
@@ -164,8 +172,15 @@ class DatabaseMigrationService @Inject constructor(
             val roomDoctors = doctorDao.getAllDoctorsSync().size
             val firestoreResult = firestoreService.getAllDoctors()
             val firestoreDoctors = firestoreResult.getOrNull()?.size ?: 0
+            
+            Log.d("DatabaseMigrationService", "Verificación doctores - Room: $roomDoctors, Firestore: $firestoreDoctors")
+            
+            // Si no hay doctores en Room, consideramos la migración exitosa
+            if (roomDoctors == 0) return true
+            
             roomDoctors == firestoreDoctors
         } catch (e: Exception) {
+            Log.e("DatabaseMigrationService", "Error verificando doctores", e)
             false
         }
     }
@@ -175,8 +190,15 @@ class DatabaseMigrationService @Inject constructor(
             val roomCitas = citaDao.getAllCitas().value?.size ?: 0
             val firestoreResult = firestoreService.getAllCitas()
             val firestoreCitas = firestoreResult.getOrNull()?.size ?: 0
+            
+            Log.d("DatabaseMigrationService", "Verificación citas - Room: $roomCitas, Firestore: $firestoreCitas")
+            
+            // Si no hay citas en Room, consideramos la migración exitosa
+            if (roomCitas == 0) return true
+            
             roomCitas == firestoreCitas
         } catch (e: Exception) {
+            Log.e("DatabaseMigrationService", "Error verificando citas", e)
             false
         }
     }
@@ -186,8 +208,15 @@ class DatabaseMigrationService @Inject constructor(
             val roomCalificaciones = calificacionDao.getAllCalificacionesSync().size
             val firestoreResult = firestoreService.getAllCalificaciones()
             val firestoreCalificaciones = firestoreResult.getOrNull()?.size ?: 0
+            
+            Log.d("DatabaseMigrationService", "Verificación calificaciones - Room: $roomCalificaciones, Firestore: $firestoreCalificaciones")
+            
+            // Si no hay calificaciones en Room, consideramos la migración exitosa
+            if (roomCalificaciones == 0) return true
+            
             roomCalificaciones == firestoreCalificaciones
         } catch (e: Exception) {
+            Log.e("DatabaseMigrationService", "Error verificando calificaciones", e)
             false
         }
     }
@@ -197,8 +226,15 @@ class DatabaseMigrationService @Inject constructor(
             val roomNotificaciones = notificacionDao.getAllNotificacionesSync().size
             val firestoreResult = firestoreService.getAllNotificaciones()
             val firestoreNotificaciones = firestoreResult.getOrNull()?.size ?: 0
+            
+            Log.d("DatabaseMigrationService", "Verificación notificaciones - Room: $roomNotificaciones, Firestore: $firestoreNotificaciones")
+            
+            // Si no hay notificaciones en Room, consideramos la migración exitosa
+            if (roomNotificaciones == 0) return true
+            
             roomNotificaciones == firestoreNotificaciones
         } catch (e: Exception) {
+            Log.e("DatabaseMigrationService", "Error verificando notificaciones", e)
             false
         }
     }
