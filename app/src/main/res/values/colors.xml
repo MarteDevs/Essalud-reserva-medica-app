@@ -55,6 +55,6 @@
     <color name="futuristic_background">#e9efff</color> <!-- Fondo muy claro, casi blanco con un toque azul -->
     <color name="futuristic_text">#1C2A4B</color>     <!-- Texto oscuro, un azul casi negro -->
     <color name="futuristic_hint">#8A94A6</color>     <!-- Texto para hints, un gris azulado -->
-
+    <color name="futuristic_background_light">#F4F7FF</color>
 
 </resources>

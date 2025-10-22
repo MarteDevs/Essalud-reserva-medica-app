@@ -3,6 +3,7 @@ package com.mars.essalureservamedica.data.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.mars.essalureservamedica.data.entity.Cita
+import com.mars.essalureservamedica.data.entity.DoctorConFrecuencia
 import java.util.*
 
 @Dao
@@ -96,7 +97,21 @@ interface CitaDao {
         ORDER BY fechaHora DESC
     """)
     fun getHistorialCitas(userId: Int, fechaActual: Date): LiveData<List<Cita>>
+
+    @Query("""
+    SELECT d.*, COUNT(c.id) AS totalCitas
+    FROM doctores d
+    INNER JOIN citas c ON d.id = c.doctorId
+    WHERE c.usuarioId = :userId
+    GROUP BY d.id
+    ORDER BY totalCitas DESC
+    LIMIT 3
+""")
+    suspend fun getDoctoresFrecuentes(userId: Int): List<DoctorConFrecuencia>
+
 }
+
+
 
 data class CitaWithDoctorInfo(
     val id: Int,

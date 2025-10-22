@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/futuristic_background"
-    android:fillViewport="true"
-    tools:context=".ui.home.HomeFragment">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -178,6 +177,120 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardCalendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Mes seleccionado -->
+                <TextView
+                    android:id="@+id/tvMes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Octubre 2025"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/futuristic_text"
+                    android:paddingBottom="8dp"/>
+
+                <!-- Encabezado de días -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="7"
+                    android:paddingBottom="4dp">
+
+                    <TextView android:text="Dom" style="@style/DayHeader"/>
+                    <TextView android:text="Lun" style="@style/DayHeader"/>
+                    <TextView android:text="Mar" style="@style/DayHeader"/>
+                    <TextView android:text="Mié" style="@style/DayHeader"/>
+                    <TextView android:text="Jue" style="@style/DayHeader"/>
+                    <TextView android:text="Vie" style="@style/DayHeader"/>
+                    <TextView android:text="Sáb" style="@style/DayHeader"/>
+                </LinearLayout>
+
+                <!-- Grid del calendario -->
+                <GridLayout
+                    android:id="@+id/gridCalendar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="7"
+                    android:rowCount="6"
+                    android:alignmentMode="alignMargins"
+                    android:useDefaultMargins="true"
+                    android:layout_marginTop="4dp"
+                    android:clipToPadding="false"/>
+
+                <!-- Detalle de cita del día seleccionado -->
+                <!-- Detalle de cita del día seleccionado -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardDetalleCita"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="20dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <!-- Contenedor de las citas del día -->
+                    <LinearLayout
+                        android:id="@+id/containerCitasDia"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:clipToPadding="false"/>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardFrecuentlyDoctors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Médicos más frecuentes"
+                    android:textColor="@color/futuristic_text"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/containerDoctoresFrecuentes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

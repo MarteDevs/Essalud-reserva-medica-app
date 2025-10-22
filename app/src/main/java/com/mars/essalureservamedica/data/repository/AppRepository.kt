@@ -8,11 +8,9 @@ import com.mars.essalureservamedica.data.dao.CalificacionConDetalles
 import com.mars.essalureservamedica.data.entity.Calificacion
 import com.mars.essalureservamedica.data.entity.Cita
 import com.mars.essalureservamedica.data.entity.Doctor
+import com.mars.essalureservamedica.data.entity.DoctorConFrecuencia
 import com.mars.essalureservamedica.data.entity.Notificacion
 import com.mars.essalureservamedica.data.entity.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.Date
 
 class AppRepository(private val database: AppDatabase) {
@@ -254,5 +252,9 @@ class AppRepository(private val database: AppDatabase) {
                 repository
             }
         }
+    }
+    ///NUEVO
+    suspend fun getDoctoresFrecuentes(userId: Int): List<DoctorConFrecuencia> {
+        return database.citaDao().getDoctoresFrecuentes(userId)
     }
 }

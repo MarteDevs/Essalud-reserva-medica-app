@@ -5,7 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.mars.essalureservamedica.data.database.AppDatabase
+import com.mars.essalureservamedica.data.entity.Cita
+import com.mars.essalureservamedica.data.entity.DoctorConFrecuencia
 import com.mars.essalureservamedica.data.repository.AppRepository
 import com.mars.essalureservamedica.utils.SessionManager
 import kotlinx.coroutines.launch
@@ -25,6 +26,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         repository = AppRepository.getInstance(application)
         sessionManager = SessionManager(application)
     }
+    private val _doctoresFrecuentes = MutableLiveData<List<DoctorConFrecuencia>>()
+    val doctoresFrecuentes: LiveData<List<DoctorConFrecuencia>> = _doctoresFrecuentes
+
+
+    private val _citasUsuario = MutableLiveData<List<Cita>>()
+    val citasUsuario: LiveData<List<Cita>> = _citasUsuario
 
     fun loadStats() {
         viewModelScope.launch {
@@ -47,4 +54,34 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+
+    fun loadDoctoresFrecuentes() {
+        viewModelScope.launch {
+            val userId = sessionManager.getUserId()
+            if (userId != -1) {
+                val doctores = repository.getDoctoresFrecuentes(userId)
+                _doctoresFrecuentes.value = doctores
+            } else {
+                _doctoresFrecuentes.value = emptyList()
+            }
+        }
+    }
+
+
+    fun loadCitasUsuario() {
+        viewModelScope.launch {
+            val userId = sessionManager.getUserId()
+            if (userId != -1) {
+                repository.getCitasByUserId(userId).observeForever { citas ->
+                    _citasUsuario.value = citas
+                }
+            } else {
+                _citasUsuario.value = emptyList()
+            }
+        }
+    }
+
+    suspend fun getDoctorById(doctorId: Int) = repository.getDoctorById(doctorId)
+
 }
