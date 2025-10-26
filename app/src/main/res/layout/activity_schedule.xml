@@ -115,7 +115,9 @@
                 app:hintTextColor="@color/futuristic_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvDateTitle">
+                app:layout_constraintTop_toBottomOf="@+id/tvDateTitle"
+                app:helperText="Fecha seleccionada automáticamente"
+                app:helperTextTextColor="@color/futuristic_accent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDate"
@@ -151,7 +153,9 @@
                 app:hintTextColor="@color/futuristic_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvTimeTitle">
+                app:layout_constraintTop_toBottomOf="@+id/tvTimeTitle"
+                app:helperText="Hora seleccionada automáticamente"
+                app:helperTextTextColor="@color/futuristic_accent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etTime"

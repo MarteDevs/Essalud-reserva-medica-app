@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mars.essalureservamedica.databinding.ActivityDoctorDetailBinding
 import com.mars.essalureservamedica.ui.doctor.adapter.ScheduleAdapter
 import com.mars.essalureservamedica.ui.schedule.ScheduleActivity
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class DoctorDetailActivity : AppCompatActivity() {
 
@@ -48,7 +50,11 @@ class DoctorDetailActivity : AppCompatActivity() {
             val intent = Intent(this, ScheduleActivity::class.java)
             intent.putExtra("doctor_id", viewModel.doctor.value?.id)
             intent.putExtra("schedule_date", schedule.date)
-            intent.putExtra("schedule_time", schedule.time)
+            
+            // Convertir hora de formato 12h a 24h
+            val time24h = convertTo24HourFormat(schedule.time)
+            intent.putExtra("schedule_time", time24h)
+            intent.putExtra("preselected", true) // Indicar que viene preseleccionado
             startActivity(intent)
         }
 
@@ -80,8 +86,20 @@ class DoctorDetailActivity : AppCompatActivity() {
             if (doctorId != null && doctorId.isNotEmpty()) {
                 val intent = Intent(this, ScheduleActivity::class.java)
                 intent.putExtra("doctor_id", doctorId)
+                intent.putExtra("preselected", false) // No viene preseleccionado
                 startActivity(intent)
             }
+        }
+    }
+
+    private fun convertTo24HourFormat(time12h: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val date = inputFormat.parse(time12h)
+            outputFormat.format(date ?: return time12h)
+        } catch (e: Exception) {
+            time12h // Retornar el formato original si hay error
         }
     }
 

@@ -20,6 +20,7 @@ class ScheduleActivity : AppCompatActivity() {
     private var selectedTime: Calendar? = null
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    private var isPreselected = false // Indica si fecha y hora vienen preseleccionadas
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +36,56 @@ class ScheduleActivity : AppCompatActivity() {
             viewModel.loadDoctorDetails(doctorId)
         }
 
+        // Verificar si viene preseleccionado
+        isPreselected = intent.getBooleanExtra("preselected", false)
+
         // Pre-llenar fecha y hora si vienen del intent
-        intent.getStringExtra("schedule_date")?.let { date ->
+        val scheduleDate = intent.getStringExtra("schedule_date")
+        val scheduleTime = intent.getStringExtra("schedule_time")
+        
+        scheduleDate?.let { date ->
             binding.etDate.setText(date)
+            // Parsear la fecha para selectedDate
+            try {
+                selectedDate = Calendar.getInstance().apply {
+                    time = dateFormat.parse(date) ?: Date()
+                }
+            } catch (e: Exception) {
+                // Manejar error de parsing
+            }
         }
-        intent.getStringExtra("schedule_time")?.let { time ->
+        scheduleTime?.let { time ->
             binding.etTime.setText(time)
+            // Parsear la hora para selectedTime
+            try {
+                selectedTime = Calendar.getInstance().apply {
+                    this.time = timeFormat.parse(time) ?: Date()
+                }
+            } catch (e: Exception) {
+                // Manejar error de parsing
+            }
+        }
+
+        // Configurar campos preseleccionados si vienen del intent
+        if (isPreselected && scheduleDate != null && scheduleTime != null) {
+            // Deshabilitar campos y cambiar apariencia
+            binding.etDate.isEnabled = false
+            binding.etTime.isEnabled = false
+            binding.tilDate.alpha = 0.7f
+            binding.tilTime.alpha = 0.7f
+            
+            // Mostrar texto de ayuda
+            binding.tilDate.helperText = "Fecha seleccionada automáticamente"
+            binding.tilTime.helperText = "Hora seleccionada automáticamente"
+            
+            // Cargar horas ocupadas para la fecha seleccionada
+            if (doctorId != null) {
+                viewModel.cargarHorasOcupadas(doctorId, scheduleDate)
+            }
+        } else {
+            // Ocultar texto de ayuda cuando no hay preselección
+            binding.tilDate.helperText = null
+            binding.tilTime.helperText = null
         }
     }
 
@@ -55,11 +100,15 @@ class ScheduleActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.etDate.setOnClickListener {
-            showDatePicker()
+            if (!isPreselected) {
+                showDatePicker()
+            }
         }
 
         binding.etTime.setOnClickListener {
-            showTimePicker()
+            if (!isPreselected) {
+                showTimePicker()
+            }
         }
 
         binding.btnConfirmAppointment.setOnClickListener {

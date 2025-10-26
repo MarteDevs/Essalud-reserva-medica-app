@@ -54,14 +54,14 @@ class RatingDialogFragment : DialogFragment() {
         setupViews()
         setupObservers()
         
-        return AlertDialog.Builder(requireContext())
+        val dialog = AlertDialog.Builder(requireContext())
             .setView(binding.root)
-            .setTitle("Calificar Consulta")
-            .setPositiveButton("Enviar Calificación") { _, _ ->
-                submitRating()
-            }
-            .setNegativeButton("Cancelar", null)
             .create()
+            
+        // Configurar fondo transparente para mostrar el diseño personalizado
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        
+        return dialog
     }
     
     private fun setupViews() {
@@ -76,6 +76,15 @@ class RatingDialogFragment : DialogFragment() {
                 updateRatingText(rating)
             }
             updateRatingText(5.0f)
+            
+            // Configurar botones
+            btnCancel.setOnClickListener {
+                dismiss()
+            }
+            
+            btnSubmit.setOnClickListener {
+                submitRating()
+            }
         }
     }
     

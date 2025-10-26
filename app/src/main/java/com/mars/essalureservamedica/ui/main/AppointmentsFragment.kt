@@ -150,14 +150,35 @@ class AppointmentsFragment : Fragment() {
     }
 
     private fun showCompleteConfirmation(cita: CitaWithDoctorFirestore) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Completar Cita")
-            .setMessage("¿Confirmas que la cita con ${cita.doctorNombre} ha sido completada?")
-            .setPositiveButton("Sí, Completar") { _, _ ->
-                viewModel.updateCitaEstado(cita.id, "COMPLETADA")
-            }
-            .setNegativeButton("No", null)
-            .show()
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_complete_confirmation, null)
+            
+        // Configurar los datos de la cita
+        dialogView.findViewById<TextView>(R.id.tvDoctorName).text = cita.doctorNombre
+        dialogView.findViewById<TextView>(R.id.tvSpecialty).text = cita.doctorEspecialidad
+        dialogView.findViewById<TextView>(R.id.tvDateTime).text = 
+            SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cita.fechaHora)
+            
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+            
+        // Configurar fondo transparente
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        
+        // Configurar botones
+        dialogView.findViewById<MaterialButton>(R.id.btnCancel).setOnClickListener {
+            dialog.dismiss()
+        }
+        
+        dialogView.findViewById<MaterialButton>(R.id.btnConfirm).setOnClickListener {
+            viewModel.updateCitaEstado(cita.id, "COMPLETADA")
+            // Después de completar, mostrar automáticamente el diálogo de calificación
+            showRatingDialog(cita.copy(estado = "COMPLETADA"))
+            dialog.dismiss()
+        }
+        
+        dialog.show()
     }
 
     private fun showRescheduleDialog(cita: CitaWithDoctorFirestore) {
