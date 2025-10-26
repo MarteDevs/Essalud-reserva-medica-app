@@ -9,10 +9,12 @@ import com.mars.essalureservamedica.data.dao.CalificacionConDetalles
 import com.mars.essalureservamedica.data.entity.Calificacion
 import com.mars.essalureservamedica.data.entity.Cita
 import com.mars.essalureservamedica.data.entity.Doctor
+import com.mars.essalureservamedica.data.entity.DoctorConFrecuencia
 import com.mars.essalureservamedica.data.entity.Notificacion
 import com.mars.essalureservamedica.data.entity.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -115,6 +117,12 @@ class AppRepository(private val database: AppDatabase) {
 
     suspend fun deleteCita(cita: Cita) {
         database.citaDao().delete(cita)
+    }
+
+    ///NUEVO
+    // Doctores frecuentes (ahora LiveData)
+    fun getDoctoresFrecuentes(userId: Int): LiveData<List<DoctorConFrecuencia>> {
+        return database.citaDao().getDoctoresFrecuentes(userId)
     }
 
     // Calificacion operations

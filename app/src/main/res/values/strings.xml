@@ -2,4 +2,6 @@
     <string name="app_name">Kardia</string>
     <string name="login_prompt_no_account">¿No tienes una cuenta?</string>
     <string name="login_prompt_register">Regístrate aquí</string>
+    <string name="boton1"><![CDATA[>]]></string>
+    <string name="boton2"><![CDATA[<]]></string>
 </resources>
