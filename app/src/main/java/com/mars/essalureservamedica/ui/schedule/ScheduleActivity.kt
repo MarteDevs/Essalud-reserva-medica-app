@@ -71,7 +71,7 @@ class ScheduleActivity : AppCompatActivity() {
         viewModel.doctor.observe(this) { doctor ->
             doctor?.let {
                 binding.apply {
-                    tvDoctorName.text = "Dr. ${it.nombre}"
+                    tvDoctorName.text = it.nombre
                     tvSpecialty.text = it.especialidad
                 }
             }

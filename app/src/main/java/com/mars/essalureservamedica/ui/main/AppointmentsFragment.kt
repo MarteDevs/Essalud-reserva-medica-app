@@ -60,6 +60,10 @@ class AppointmentsFragment : Fragment() {
                 // Mostrar diálogo para reprogramar
                 showRescheduleDialog(citaWithDoctorInfo)
             },
+            onCompleteClick = { citaWithDoctorInfo ->
+                // Mostrar confirmación para completar
+                showCompleteConfirmation(citaWithDoctorInfo)
+            },
             onRateClick = { citaWithDoctorInfo ->
                 // Mostrar diálogo para calificar
                 showRatingDialog(citaWithDoctorInfo)
@@ -103,7 +107,7 @@ class AppointmentsFragment : Fragment() {
         val estado = EstadoCita.fromString(cita.estado)
         
         // Configurar los datos en las vistas
-        dialogView.findViewById<TextView>(R.id.tvDoctorName).text = "Dr. ${cita.doctorNombre}"
+        dialogView.findViewById<TextView>(R.id.tvDoctorName).text = cita.doctorNombre
         dialogView.findViewById<TextView>(R.id.tvSpecialty).text = cita.doctorEspecialidad
         dialogView.findViewById<TextView>(R.id.tvDateTime).text = 
             SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cita.fechaHora)
@@ -137,9 +141,20 @@ class AppointmentsFragment : Fragment() {
     private fun showCancelConfirmation(cita: CitaWithDoctorFirestore) {
         AlertDialog.Builder(requireContext())
             .setTitle("Cancelar Cita")
-            .setMessage("¿Estás seguro de que deseas cancelar la cita con Dr. ${cita.doctorNombre}?")
+            .setMessage("¿Estás seguro de que deseas cancelar la cita con ${cita.doctorNombre}?")
             .setPositiveButton("Sí, Cancelar") { _, _ ->
                 viewModel.cancelarCita(cita.id)
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun showCompleteConfirmation(cita: CitaWithDoctorFirestore) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Completar Cita")
+            .setMessage("¿Confirmas que la cita con ${cita.doctorNombre} ha sido completada?")
+            .setPositiveButton("Sí, Completar") { _, _ ->
+                viewModel.updateCitaEstado(cita.id, "COMPLETADA")
             }
             .setNegativeButton("No", null)
             .show()

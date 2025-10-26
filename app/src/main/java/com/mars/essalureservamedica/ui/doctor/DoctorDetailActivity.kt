@@ -62,7 +62,7 @@ class DoctorDetailActivity : AppCompatActivity() {
         viewModel.doctor.observe(this) { doctor ->
             doctor?.let {
                 binding.apply {
-                    tvDoctorName.text = "Dr. ${it.nombre}"
+                    tvDoctorName.text = it.nombre
                     tvSpecialty.text = it.especialidad
                     tvExperience.text = "${it.experiencia} años de experiencia"
                 }

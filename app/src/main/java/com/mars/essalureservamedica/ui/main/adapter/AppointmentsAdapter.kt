@@ -19,6 +19,7 @@ class AppointmentsAdapter(
     private val onAppointmentClick: (CitaWithDoctorFirestore) -> Unit,
     private val onCancelClick: (CitaWithDoctorFirestore) -> Unit,
     private val onRescheduleClick: (CitaWithDoctorFirestore) -> Unit,
+    private val onCompleteClick: (CitaWithDoctorFirestore) -> Unit,
     private val onRateClick: (CitaWithDoctorFirestore) -> Unit
 ) : ListAdapter<CitaWithDoctorFirestore, AppointmentsAdapter.AppointmentViewHolder>(AppointmentDiffCallback()) {
 
@@ -43,7 +44,7 @@ class AppointmentsAdapter(
 
         fun bind(citaWithDoctorInfo: CitaWithDoctorFirestore) {
             binding.apply {
-                tvDoctorName.text = "Dr. ${citaWithDoctorInfo.doctorNombre}"
+                tvDoctorName.text = citaWithDoctorInfo.doctorNombre
                 tvSpecialty.text = citaWithDoctorInfo.doctorEspecialidad
                 tvDateTime.text = dateFormat.format(citaWithDoctorInfo.fechaHora)
 
@@ -84,6 +85,16 @@ class AppointmentsAdapter(
 
                 btnReschedule.setOnClickListener {
                     onRescheduleClick(citaWithDoctorInfo)
+                }
+
+                // Mostrar botón de completar solo para citas confirmadas
+                if (estado == EstadoCita.CONFIRMADA) {
+                    btnComplete.visibility = View.VISIBLE
+                    btnComplete.setOnClickListener {
+                        onCompleteClick(citaWithDoctorInfo)
+                    }
+                } else {
+                    btnComplete.visibility = View.GONE
                 }
 
                 // Mostrar botón de calificar solo para citas completadas

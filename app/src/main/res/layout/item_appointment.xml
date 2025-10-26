@@ -135,6 +135,16 @@
                 android:textSize="13sp" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnComplete"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Completar"
+                android:textColor="@color/futuristic_primary"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRate"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
