@@ -4,16 +4,16 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#757575</color>
 
-    <!-- Primary Colors -->
-    <color name="primary_color">#2E7D32</color>
-    <color name="primary">#2E7D32</color>
-    <color name="primary_dark">#1B5E20</color>
-    <color name="primary_light">#4CAF50</color>
+    <!-- Primary Colors - Updated to Blue Theme -->
+    <color name="primary_color">#3c58a0</color>
+    <color name="primary">#3c58a0</color>
+    <color name="primary_dark">#2A3F73</color>
+    <color name="primary_light">#73c3f9</color>
 
     <!-- Secondary Colors -->
-    <color name="secondary_color">#1976D2</color>
-    <color name="secondary_dark">#0D47A1</color>
-    <color name="secondary_light">#42A5F5</color>
+    <color name="secondary_color">#73c3f9</color>
+    <color name="secondary_dark">#3c58a0</color>
+    <color name="secondary_light">#B3E5FC</color>
 
     <!-- Text Colors -->
     <color name="text_primary">#212121</color>
@@ -45,17 +45,19 @@
     <!-- Divider -->
     <color name="divider">#E0E0E0</color>
 
-    <!-- GREEN COLORS  -->
+    <!-- GREEN COLORS - Deprecated, use blue theme instead -->
     <color name="primary_green">#57C973</color>
     <color name="dark_green">#317D44</color>
     <color name="light_green">#93C9A1</color>
 
-    <!-- BLUE IN LOGIN PAGE -->
+    <!-- BLUE THEME COLORS - Main Theme -->
     <color name="futuristic_primary">#3c58a0</color> <!-- Azul profundo, para títulos y botones -->
     <color name="futuristic_secondary">#73c3f9</color> <!-- Azul claro, para acentos e iconos -->
     <color name="futuristic_background">#e9efff</color> <!-- Fondo muy claro, casi blanco con un toque azul -->
     <color name="futuristic_text">#1C2A4B</color>     <!-- Texto oscuro, un azul casi negro -->
     <color name="futuristic_hint">#8A94A6</color>     <!-- Texto para hints, un gris azulado -->
+    <color name="futuristic_accent">#B3E5FC</color>   <!-- Color de acento azul claro -->
+    <color name="futuristic_dark">#2A3F73</color>     <!-- Azul oscuro para elementos destacados -->
 
 
 </resources>

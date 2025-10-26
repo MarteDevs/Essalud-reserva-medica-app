@@ -2,21 +2,28 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.EssaluReservaMedica" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/futuristic_primary</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/futuristic_secondary</item>
+        <item name="colorOnSecondary">@color/futuristic_text</item>
+        <item name="colorSurface">@color/futuristic_background</item>
+        <item name="colorOnSurface">@color/futuristic_text</item>
+        <item name="android:colorBackground">@color/futuristic_background</item>
+        <item name="colorOnBackground">@color/futuristic_text</item>
     </style>
 
     <style name="Theme.EssaluReservaMedica" parent="Base.Theme.EssaluReservaMedica" />
 
     <!-- Splash Screen theme -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenBackground">@color/futuristic_background</item>
         <item name="postSplashScreenTheme">@style/Theme.EssaluReservaMedica</item>
     </style>
 
     <!-- SearchView style -->
     <style name="AppSearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textColorHint">@color/gray</item>
-        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/futuristic_text</item>
+        <item name="android:textColorHint">@color/futuristic_hint</item>
+        <item name="android:background">@color/futuristic_background</item>
     </style>
 </resources>

@@ -4,17 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.button.MaterialButton
+import com.mars.essalureservamedica.R
 import com.mars.essalureservamedica.data.firebase.models.CitaWithDoctorFirestore
 import com.mars.essalureservamedica.data.entity.EstadoCita
 import com.mars.essalureservamedica.databinding.FragmentAppointmentsBinding
 import com.mars.essalureservamedica.ui.main.adapter.AppointmentsAdapter
 import com.mars.essalureservamedica.ui.rating.RatingDialogFragment
 import com.mars.essalureservamedica.utils.SessionManager
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AppointmentsFragment : Fragment() {
 
@@ -91,20 +97,41 @@ class AppointmentsFragment : Fragment() {
     }
 
     private fun showAppointmentDetails(cita: CitaWithDoctorFirestore) {
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_appointment_details, null)
+        
         val estado = EstadoCita.fromString(cita.estado)
-        val message = """
-            Doctor: Dr. ${cita.doctorNombre}
-            Especialidad: ${cita.doctorEspecialidad}
-            Fecha: ${java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(cita.fechaHora)}
-            Estado: ${estado.displayName}
-            ${if (cita.motivo.isNotEmpty()) "Motivo: ${cita.motivo}" else ""}
-        """.trimIndent()
+        
+        // Configurar los datos en las vistas
+        dialogView.findViewById<TextView>(R.id.tvDoctorName).text = "Dr. ${cita.doctorNombre}"
+        dialogView.findViewById<TextView>(R.id.tvSpecialty).text = cita.doctorEspecialidad
+        dialogView.findViewById<TextView>(R.id.tvDateTime).text = 
+            SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(cita.fechaHora)
+        dialogView.findViewById<TextView>(R.id.tvStatus).text = estado.displayName
+        
+        // Mostrar motivo solo si existe
+        val motivoLayout = dialogView.findViewById<LinearLayout>(R.id.llMotivo)
+        val motivoText = dialogView.findViewById<TextView>(R.id.tvMotivo)
+        if (cita.motivo.isNotEmpty()) {
+            motivoLayout.visibility = View.VISIBLE
+            motivoText.text = cita.motivo
+        } else {
+            motivoLayout.visibility = View.GONE
+        }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Detalles de la Cita")
-            .setMessage(message)
-            .setPositiveButton("Cerrar", null)
-            .show()
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+        
+        // Configurar el botón cerrar
+        dialogView.findViewById<MaterialButton>(R.id.btnClose).setOnClickListener {
+            dialog.dismiss()
+        }
+        
+        // Hacer el fondo del diálogo transparente para mostrar nuestro diseño personalizado
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        
+        dialog.show()
     }
 
     private fun showCancelConfirmation(cita: CitaWithDoctorFirestore) {
