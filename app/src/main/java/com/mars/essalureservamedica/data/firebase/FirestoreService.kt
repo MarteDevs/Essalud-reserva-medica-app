@@ -97,11 +97,11 @@ class FirestoreService {
                     return@addSnapshotListener
                 }
 
-                val doctors = snapshot?.documents?.mapNotNull {
-                    it.toObject(DoctorFirestore::class.java)
-                } ?: emptyList()
+                val doctors = snapshot?.documents
+                    ?.mapNotNull { it.toObject(DoctorFirestore::class.java) }
+                    ?.distinctBy { it.nombre.lowercase().trim() }
 
-                trySend(doctors)
+                doctors?.let { trySend(it).isSuccess }
             }
 
         awaitClose { subscription.remove() }

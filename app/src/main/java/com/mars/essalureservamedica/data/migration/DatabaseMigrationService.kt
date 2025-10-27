@@ -63,7 +63,7 @@ class DatabaseMigrationService @Inject constructor(
                     disponibilidad = doctor.disponibilidad,
                     foto = doctor.foto ?: ""
                 )
-                firestoreService.addDoctor(doctorFirestore).getOrThrow()
+               // firestoreService.addDoctor(doctorFirestore).getOrThrow()
             }
             true
         } catch (e: Exception) {
