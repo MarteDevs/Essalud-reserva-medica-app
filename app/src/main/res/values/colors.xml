@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#757575</color>
+
+    <!-- Primary Colors - Updated to Blue Theme -->
+    <color name="primary_color">#3c58a0</color>
+    <color name="primary">#3c58a0</color>
+    <color name="primary_dark">#2A3F73</color>
+    <color name="primary_light">#73c3f9</color>
+
+    <!-- Secondary Colors -->
+    <color name="secondary_color">#73c3f9</color>
+    <color name="secondary_dark">#3c58a0</color>
+    <color name="secondary_light">#B3E5FC</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
+
+    <!-- Background Colors -->
+    <color name="background_primary">#FAFAFA</color>
+    <color name="background_light">#F5F5F5</color>
+    <color name="background_secondary">#FFFFFF</color>
+    <color name="background_card">#FFFFFF</color>
+
+    <!-- Status Colors -->
+    <color name="success">#4CAF50</color>
+    <color name="success_color">#4CAF50</color>
+    <color name="warning">#FF9800</color>
+    <color name="warning_color">#FF9800</color>
+    <color name="error">#F44336</color>
+    <color name="error_color">#F44336</color>
+    <color name="info">#2196F3</color>
+    <color name="info_color">#2196F3</color>
+
+    <!-- User Status Colors -->
+    <color name="status_available">#4CAF50</color>
+    <color name="status_available_bg">#E8F5E8</color>
+    <color name="status_busy">#FF9800</color>
+    <color name="status_unavailable">#F44336</color>
+
+    <!-- Divider -->
+    <color name="divider">#E0E0E0</color>
+
+    <!-- GREEN COLORS - Deprecated, use blue theme instead -->
+    <color name="primary_green">#57C973</color>
+    <color name="dark_green">#317D44</color>
+    <color name="light_green">#93C9A1</color>
+
+    <!-- BLUE THEME COLORS - Main Theme -->
+    <color name="futuristic_primary">#3c58a0</color> <!-- Azul profundo, para títulos y botones -->
+    <color name="futuristic_secondary">#73c3f9</color> <!-- Azul claro, para acentos e iconos -->
+    <color name="futuristic_background">#e9efff</color> <!-- Fondo muy claro, casi blanco con un toque azul -->
+    <color name="futuristic_text">#1C2A4B</color>     <!-- Texto oscuro, un azul casi negro -->
+    <color name="futuristic_hint">#8A94A6</color>     <!-- Texto para hints, un gris azulado -->
+    <color name="futuristic_accent">#B3E5FC</color>   <!-- Color de acento azul claro -->
+    <color name="futuristic_dark">#2A3F73</color>     <!-- Azul oscuro para elementos destacados -->
+
+
+</resources>

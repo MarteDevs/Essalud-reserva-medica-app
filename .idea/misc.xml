@@ -1,0 +1,20 @@
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+<<<<<<< HEAD
+        <option name="scale" value="0.20511718749999996" />
+=======
+        <option name="scale" value="0.27340820312499997" />
+>>>>>>> 0897432c7bfa92bf3ec247866c5fdaa5da99bb5f
+      </ProjectState>
+    </option>
+  </component>
+</project>

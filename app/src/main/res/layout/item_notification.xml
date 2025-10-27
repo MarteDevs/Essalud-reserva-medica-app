@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardNotification"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Indicador de no leída (punto azul) -->
+        <View
+            android:id="@+id/viewUnreadIndicator"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:background="@drawable/unread_indicator_background"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/ivNotificationIcon"
+            app:layout_constraintEnd_toEndOf="@+id/ivNotificationIcon"
+            app:layout_constraintTop_toTopOf="@+id/ivNotificationIcon"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
+            tools:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/ivNotificationIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/status_available_background_styled"
+            android:padding="10dp"
+            android:src="@drawable/ic_notifications"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/futuristic_primary"
+            android:contentDescription="Icono de notificación" />
+
+        <TextView
+            android:id="@+id/tvNotificationTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/futuristic_text"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tvNotificationDate"
+            app:layout_constraintStart_toEndOf="@+id/ivNotificationIcon"
+            app:layout_constraintTop_toTopOf="@+id/ivNotificationIcon"
+            tools:text="Cita Confirmada" />
+
+        <TextView
+            android:id="@+id/tvNotificationMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/futuristic_hint"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tvNotificationTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvNotificationTitle"
+            tools:text="Tu cita con el Dr. Juan Pérez ha sido confirmada. Te esperamos." />
+
+        <TextView
+            android:id="@+id/tvNotificationDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/futuristic_hint"
+            android:textSize="12sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/tvNotificationTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="hace 5m" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

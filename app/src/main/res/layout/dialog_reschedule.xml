@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/futuristic_background"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Título del Diálogo -->
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:text="Reprogramar Cita"
+        android:textColor="@color/futuristic_primary"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <!-- Información de la cita actual -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="16dp"
+        app:strokeColor="@color/futuristic_background"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/ic_calendar"
+                app:tint="@color/futuristic_hint" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cita Actual"
+                    android:textColor="@color/futuristic_hint"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvCurrentAppointment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/futuristic_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="15 Dic 2024 - 10:00 AM" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Campos de selección -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Selecciona la nueva fecha y hora"
+        android:textColor="@color/futuristic_text"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilSelectDate"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nueva Fecha"
+        app:boxStrokeColor="@color/futuristic_primary"
+        app:hintTextColor="@color/futuristic_primary">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSelectDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="false"
+            android:inputType="none"
+            android:textColor="@color/futuristic_text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilSelectTime"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Nueva Hora"
+        app:boxStrokeColor="@color/futuristic_primary"
+        app:hintTextColor="@color/futuristic_primary">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSelectTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="false"
+            android:inputType="none"
+            android:textColor="@color/futuristic_text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--
+    Los TextViews tvSelectedDate y tvSelectedTime ya no son necesarios,
+    ya que el texto se mostrará directamente en los TextInputEditText de arriba.
+    Puedes borrarlos del XML y del código que los usa.
+    -->
+    <TextView
+        android:id="@+id/tvSelectedDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tvSelectedTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
+</LinearLayout>
