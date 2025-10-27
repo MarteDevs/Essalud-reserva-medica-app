@@ -23,7 +23,7 @@ data class CitaWithDoctorFirestore(
     val doctorRating: Double = 0.0
 ) : Serializable {
     /**
-     * Convierte la fecha (Long) a Date para compatibilidad con el código existente
+     * Convierte la fecha (Long) a Date
      */
     val fechaHora: Date
         get() = Date(fecha)

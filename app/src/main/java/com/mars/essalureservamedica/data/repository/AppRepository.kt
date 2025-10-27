@@ -179,7 +179,7 @@ class AppRepository(private val database: AppDatabase) {
         database.notificacionDao().deleteNotificacionesLeidas(userId)
     }
 
-    // Método para crear notificaciones automáticas
+    // Metodo para crear notificaciones automáticas
     suspend fun crearNotificacionCita(usuarioId: Int, citaId: Int, tipo: String, titulo: String, mensaje: String) {
         val notificacion = Notificacion(
             usuarioId = usuarioId,
